@@ -1,60 +1,95 @@
-import io
 import pandas as pd
+import numpy as np
 import streamlit as st
-from datetime import timedelta
+from datetime import datetime, timedelta
+import io
 
-st.set_page_config(page_title="Inbound Planner", layout="wide")
+st.set_page_config(page_title="📦 Inbound Planner", layout="wide")
 
 st.title("📦 Hieu Ngan's Planner")
 
-# Upload file Excel
-excel_file = st.file_uploader("Upload Excel file (Replenishment Auto.xlsx)", type=["xlsx"])
+uploaded = st.file_uploader("Upload Excel (Replenishment Auto.xlsx)", type=["xlsx"])
 
-if excel_file:
+if uploaded:
     # Đọc sheet Input
-    df_input = pd.read_excel(excel_file, sheet_name="Input")
+    df_input = pd.read_excel(uploaded, sheet_name="Input")
 
-    st.subheader("📥 Input data")
-    st.dataframe(df_input, use_container_width=True)
+    # Xác định hôm nay
+    today = datetime.today().date()
 
-    # --- Output.current ---
-    df_current = df_input.copy()
+    # Clone lại input cho output
+    df_out = df_input.copy()
 
-    # Demo logic: ROP date = hôm nay + leadtime, Order Qty = forecast * DOC
-    df_current["ROP date"] = pd.to_datetime("today") + pd.to_timedelta(df_current["Leadtime (day)"], unit="D")
-    df_current["Order Qty"] = (df_current["Forecast OB/day"] * df_current["DOC"]).astype(int)
+    # Giả sử trong Input có các cột sau (theo file bạn gửi):
+    # CAT, SKU_code, Available stock, Upcoming stock, Upcoming date,
+    # Forecast OB/day, Leadtime (day), DOC
 
-    # --- Output.ordered ---
-    df_ordered = df_current.copy()
+    # Đảm bảo format ngày
+    if "Upcoming date" in df_out.columns:
+        df_out["Upcoming date"] = pd.to_datetime(df_out["Upcoming date"], errors="coerce").dt.date
 
-    horizon = 14  # giả định 14 ngày forecast
-    for d in range(1, horizon + 1):
-        date_col = (pd.to_datetime("today") + timedelta(days=d)).strftime("%Y-%m-%d")
-        df_ordered[date_col] = (
-            df_ordered["Available stock"]
-            + df_ordered["Upcoming stock"]
-            + df_ordered["Order Qty"]
-            - df_ordered["Forecast OB/day"] * d
-        )
+    # Tạo các cột ngày (today → today+30)
+    date_cols = [(today + timedelta(days=i)) for i in range(31)]
 
-    # Hiển thị kết quả
-    st.subheader("📊 Output.current")
-    st.dataframe(df_current, use_container_width=True)
+    # Khởi tạo stock projection
+    proj = []
+    for _, row in df_out.iterrows():
+        daily_fc = row["Forecast OB/day"]
+        stock = row["Available stock"]
 
-    st.subheader("📊 Output.ordered")
-    st.dataframe(df_ordered, use_container_width=True)
+        sku_proj = {}
+        for d in date_cols:
+            # Cộng hàng inbound nếu tới ngày nhập
+            if pd.notna(row.get("Upcoming stock", None)) and pd.notna(row.get("Upcoming date", None)):
+                if d == row["Upcoming date"]:
+                    stock += row["Upcoming stock"]
+
+            # Lưu stock trước khi bán
+            sku_proj[d] = max(stock, 0)
+
+            # Trừ forecast cho ngày hôm nay
+            stock -= daily_fc
+
+        proj.append(sku_proj)
+
+    df_proj = pd.DataFrame(proj)
+    df_proj.columns = [d.strftime("%d-%b") for d in df_proj.columns]  # format cột ngày đẹp hơn
+
+    # Tính ROP date
+    rop_dates = []
+    for idx, row in df_proj.iterrows():
+        first_zero = None
+        for d in df_proj.columns:
+            if row[d] <= 0:
+                first_zero = datetime.strptime(d + f"-{today.year}", "%d-%b-%Y").date()
+                break
+        if first_zero:
+            leadtime = int(df_out.loc[idx, "Leadtime (day)"])
+            rop_dates.append(first_zero - timedelta(days=leadtime))
+        else:
+            rop_dates.append(None)
+
+    df_out["ROP date"] = rop_dates
+
+    # Tính Order Qty
+    df_out["Order Qty"] = df_out["Forecast OB/day"] * df_out["DOC"]
+
+    # Ghép kết quả cuối
+    result = pd.concat([df_out, df_proj], axis=1)
+
+    st.success(f"✅ Đã tính xong Output.current cho {len(result)} SKU")
+    st.dataframe(result, use_container_width=True)
 
     # Xuất Excel
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-        df_current.to_excel(writer, index=False, sheet_name="Output.current")
-        df_ordered.to_excel(writer, index=False, sheet_name="Output.ordered")
-
+        result.to_excel(writer, sheet_name="Output.current", index=False)
     st.download_button(
-        "⬇️ Download Excel Output",
+        "⬇️ Tải Output.current",
         data=output.getvalue(),
-        file_name="Replenishment_Output.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        file_name="Output.current.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
+
 else:
-    st.info("👉 Vui lòng upload file Excel theo format của sheet 'Input'.")
+    st.info("👉 Hãy upload file Excel `Replenishment Auto.xlsx` để bắt đầu.")
