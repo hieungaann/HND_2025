@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-st.set_page_config(page_title="Inbound Planner (HND2025) + Excel Replenishment", layout="wide")
+st.set_page_config(page_title="Inbound Planner", layout="wide")
 st.title("📦 Hieu Ngan's Inbound Planner — HND2025 + Replenishment Excel")
 
 # ------------------------------
