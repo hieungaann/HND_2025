@@ -9,14 +9,13 @@ st.title("📦 Hieu Ngan's Inbound Planner")
 
 with st.expander("ℹ️ Input data format"):
     st.markdown("""
-    **Upload file CSV hoặc Excel (.xlsx)** theo cấu trúc giống file *Template Shop LG* với các cột quan trọng:
+    **Upload CSV** theo cấu trúc giống file *Template Shop LG.csv* với các cột quan trọng:
     - Cột thông tin cơ bản: `sku_id`, `mt_sku_id`, `shop_id`, `shop_name`, `item_name`, `category_cluster`
     - Tồn kho: `total_stock_vncb`, `total_stock_vnn`, `total_stock_vns`, `total_stock_vndb`
     - Inbound: `vncb_inbounding`, `vnn_inbounding`, `vns_inbounding`, `vndb_inbounding`
     - Sales 30 ngày (TB/ngày): `l30_daily_itemsold_vncb`, `l30_daily_itemsold_vnn`, `l30_daily_itemsold_vns`, `l30_daily_itemsold_vndb`
     """)
 
-# --- Sidebar inputs ---
 st.sidebar.header("⚙️ Parameters")
 horizon_days = st.sidebar.number_input("Forecast horizon (days)", min_value=7, max_value=180, value=90, step=1)
 leadtime_days = st.sidebar.number_input("Leadtime (days)", min_value=0, max_value=60, value=7, step=1)
@@ -30,18 +29,15 @@ st.sidebar.markdown("**Constraints (optional)**")
 pack_size = st.sidebar.number_input("Pack size (round to multiples of)", min_value=0, max_value=1000, value=0, step=1)
 moq_units = st.sidebar.number_input("MOQ (units)", min_value=0, max_value=100000, value=0, step=1)
 
-# --- Upload section ---
-uploaded = st.file_uploader("Upload CSV hoặc Excel", type=["csv", "xlsx"])
+uploaded = st.file_uploader("Upload CSV", type=["csv"])
 
 sample_df = None
 if uploaded:
-    if uploaded.name.endswith(".csv"):
-        df = pd.read_csv(uploaded)
-    else:
-        df = pd.read_excel(uploaded)
+    df = pd.read_csv(uploaded)
 else:
-    st.info("Chưa upload file. Bạn có thể thử với dữ liệu mẫu (nhấn nút dưới).")
+    st.info("Chưa upload CSV. Bạn có thể thử với dữ liệu mẫu (nhấn nút dưới).")
     if st.button("Dùng dữ liệu mẫu"):
+        # Minimal sample to demonstrate logic
         sample_df = pd.DataFrame({
             "sku_id": ["A","B","C"],
             "mt_sku_id": ["111_1", "222_2", "333_3"],
@@ -65,13 +61,13 @@ else:
         df = sample_df
 
 if 'df' in locals():
-    # --- filter SKU ---
+    # Optional filter by MT SKU
     st.sidebar.markdown("---")
     mt_filter = st.sidebar.text_input("Filter by mt_sku_id (optional)")
     if mt_filter:
         df = df[df["mt_sku_id"].astype(str).str.contains(mt_filter, na=False)]
 
-    # --- Compute metrics ---
+    # Compute helpers
     df["total_stock"] = df[["total_stock_vncb","total_stock_vnn","total_stock_vns","total_stock_vndb"]].sum(axis=1, skipna=True)
     df["total_inbound"] = df[["vncb_inbounding","vnn_inbounding","vns_inbounding","vndb_inbounding"]].sum(axis=1, skipna=True)
     df["avg_sales_30d"] = df[["l30_daily_itemsold_vncb","l30_daily_itemsold_vnn","l30_daily_itemsold_vns","l30_daily_itemsold_vndb"]].sum(axis=1, skipna=True)
@@ -89,7 +85,7 @@ if 'df' in locals():
 
     df["inbound_need_units"] = (df["forecast_h_units"] + df["safety_units"] + df["leadtime_units"] - df["available_units"]).clip(lower=0)
 
-    # --- Constraints ---
+    # Rounding by constraints
     def round_constraints(x):
         if moq_units and x > 0:
             x = max(x, moq_units)
@@ -99,7 +95,7 @@ if 'df' in locals():
 
     df["IB_suggest_units"] = df["inbound_need_units"].apply(round_constraints)
 
-    # --- Coverage after IB ---
+    # Coverage reached after IB
     with np.errstate(divide='ignore', invalid='ignore'):
         df["coverage_after_IB_days"] = np.where(
             df["avg_sales_30d"]>0,
@@ -118,18 +114,13 @@ if 'df' in locals():
     st.success(f"Đã tính xong. {len(result)} dòng.")
     st.dataframe(result, use_container_width=True)
 
-    # --- Download CSV ---
-    csv = result.to_csv(index=False).encode("utf-8")
-    st.download_button("⬇️ Tải kết quả CSV", data=csv, file_name="inbound_suggestion.csv", mime="text/csv")
-
-    # --- Download Excel ---
+    # Download Excel
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
         result.to_excel(writer, index=False, sheet_name="Inbound Plan")
-    excel_data = output.getvalue()
     st.download_button(
         "⬇️ Tải kết quả Excel",
-        data=excel_data,
+        data=output.getvalue(),
         file_name="inbound_suggestion.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
