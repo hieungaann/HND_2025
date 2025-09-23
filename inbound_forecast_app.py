@@ -4,9 +4,9 @@ import streamlit as st
 from datetime import datetime, timedelta
 import io
 
-st.set_page_config(page_title="📦 Inbound Planner", layout="wide")
+st.set_page_config(page_title="📦 Replenishment Planner", layout="wide")
 
-st.title("📦 Hieu Ngan's Planner")
+st.title("📦 Hieu Ngan's Replenishment Planner")
 
 uploaded = st.file_uploader("Upload Excel (Replenishment Auto.xlsx)", type=["xlsx"])
 
@@ -20,11 +20,7 @@ if uploaded:
     # Clone lại input cho output
     df_out = df_input.copy()
 
-    # Giả sử trong Input có các cột sau (theo file bạn gửi):
-    # CAT, SKU_code, Available stock, Upcoming stock, Upcoming date,
-    # Forecast OB/day, Leadtime (day), DOC
-
-    # Đảm bảo format ngày
+    # Đảm bảo format ngày cho Upcoming date
     if "Upcoming date" in df_out.columns:
         df_out["Upcoming date"] = pd.to_datetime(df_out["Upcoming date"], errors="coerce").dt.date
 
@@ -39,21 +35,21 @@ if uploaded:
 
         sku_proj = {}
         for d in date_cols:
-            # Cộng hàng inbound nếu tới ngày nhập
+            # Trừ forecast trước (cuối ngày)
+            stock -= daily_fc
+
+            # Nếu có inbound đúng ngày này → cộng thêm
             if pd.notna(row.get("Upcoming stock", None)) and pd.notna(row.get("Upcoming date", None)):
                 if d == row["Upcoming date"]:
                     stock += row["Upcoming stock"]
 
-            # Lưu stock trước khi bán
+            # Lưu stock cuối ngày
             sku_proj[d] = max(stock, 0)
-
-            # Trừ forecast cho ngày hôm nay
-            stock -= daily_fc
 
         proj.append(sku_proj)
 
     df_proj = pd.DataFrame(proj)
-    df_proj.columns = [d.strftime("%d-%b") for d in df_proj.columns]  # format cột ngày đẹp hơn
+    df_proj.columns = [d.strftime("%d-%b") for d in df_proj.columns]  # format cột ngày đẹp
 
     # Tính ROP date
     rop_dates = []
@@ -61,6 +57,7 @@ if uploaded:
         first_zero = None
         for d in df_proj.columns:
             if row[d] <= 0:
+                # parse date từ tên cột
                 first_zero = datetime.strptime(d + f"-{today.year}", "%d-%b-%Y").date()
                 break
         if first_zero:
