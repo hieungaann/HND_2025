@@ -6,7 +6,7 @@ import pandas as pd
 import streamlit as st
 
 st.set_page_config(page_title="Inbound Planner", layout="wide")
-st.title("📦 Hieu Ngan's Inbound Planner — HND2025 + Replenishment Excel")
+st.title("📦 Hieu Ngan's Inbound Planner")
 
 # ------------------------------
 # Sidebar: choose module
