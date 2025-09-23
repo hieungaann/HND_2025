@@ -9,7 +9,7 @@ st.title("📦 Hieu Ngan's Inbound Planner")
 
 with st.expander("ℹ️ Input data format"):
     st.markdown("""
-    **Upload CSV** theo cấu trúc giống file *Template Shop LG.csv* với các cột quan trọng:
+    **Upload file CSV hoặc Excel (.xlsx)** theo cấu trúc giống file *Template Shop LG* với các cột quan trọng:
     - Cột thông tin cơ bản: `sku_id`, `mt_sku_id`, `shop_id`, `shop_name`, `item_name`, `category_cluster`
     - Tồn kho: `total_stock_vncb`, `total_stock_vnn`, `total_stock_vns`, `total_stock_vndb`
     - Inbound: `vncb_inbounding`, `vnn_inbounding`, `vns_inbounding`, `vndb_inbounding`
@@ -29,6 +29,7 @@ st.sidebar.markdown("**Constraints (optional)**")
 pack_size = st.sidebar.number_input("Pack size (round to multiples of)", min_value=0, max_value=1000, value=0, step=1)
 moq_units = st.sidebar.number_input("MOQ (units)", min_value=0, max_value=100000, value=0, step=1)
 
+# --- Upload section ---
 uploaded = st.file_uploader("Upload CSV hoặc Excel", type=["csv", "xlsx"])
 
 sample_df = None
@@ -40,7 +41,6 @@ if uploaded:
 else:
     st.info("Chưa upload file. Bạn có thể thử với dữ liệu mẫu (nhấn nút dưới).")
     if st.button("Dùng dữ liệu mẫu"):
-        # Minimal sample to demonstrate logic
         sample_df = pd.DataFrame({
             "sku_id": ["A","B","C"],
             "mt_sku_id": ["111_1", "222_2", "333_3"],
@@ -64,13 +64,13 @@ else:
         df = sample_df
 
 if 'df' in locals():
-    # Optional filter by MT SKU
+    # --- filter SKU ---
     st.sidebar.markdown("---")
     mt_filter = st.sidebar.text_input("Filter by mt_sku_id (optional)")
     if mt_filter:
         df = df[df["mt_sku_id"].astype(str).str.contains(mt_filter, na=False)]
 
-    # Compute helpers
+    # --- Compute metrics ---
     df["total_stock"] = df[["total_stock_vncb","total_stock_vnn","total_stock_vns","total_stock_vndb"]].sum(axis=1, skipna=True)
     df["total_inbound"] = df[["vncb_inbounding","vnn_inbounding","vns_inbounding","vndb_inbounding"]].sum(axis=1, skipna=True)
     df["avg_sales_30d"] = df[["l30_daily_itemsold_vncb","l30_daily_itemsold_vnn","l30_daily_itemsold_vns","l30_daily_itemsold_vndb"]].sum(axis=1, skipna=True)
@@ -88,7 +88,7 @@ if 'df' in locals():
 
     df["inbound_need_units"] = (df["forecast_h_units"] + df["safety_units"] + df["leadtime_units"] - df["available_units"]).clip(lower=0)
 
-    # Rounding by constraints
+    # --- Constraints ---
     def round_constraints(x):
         if moq_units and x > 0:
             x = max(x, moq_units)
@@ -98,7 +98,7 @@ if 'df' in locals():
 
     df["IB_suggest_units"] = df["inbound_need_units"].apply(round_constraints)
 
-    # Coverage reached after IB
+    # --- Coverage after IB ---
     with np.errstate(divide='ignore', invalid='ignore'):
         df["coverage_after_IB_days"] = np.where(
             df["avg_sales_30d"]>0,
