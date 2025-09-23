@@ -29,13 +29,16 @@ st.sidebar.markdown("**Constraints (optional)**")
 pack_size = st.sidebar.number_input("Pack size (round to multiples of)", min_value=0, max_value=1000, value=0, step=1)
 moq_units = st.sidebar.number_input("MOQ (units)", min_value=0, max_value=100000, value=0, step=1)
 
-uploaded = st.file_uploader("Upload CSV", type=["csv"])
+uploaded = st.file_uploader("Upload CSV hoặc Excel", type=["csv", "xlsx"])
 
 sample_df = None
 if uploaded:
-    df = pd.read_csv(uploaded)
+    if uploaded.name.endswith(".csv"):
+        df = pd.read_csv(uploaded)
+    else:
+        df = pd.read_excel(uploaded)
 else:
-    st.info("Chưa upload CSV. Bạn có thể thử với dữ liệu mẫu (nhấn nút dưới).")
+    st.info("Chưa upload file. Bạn có thể thử với dữ liệu mẫu (nhấn nút dưới).")
     if st.button("Dùng dữ liệu mẫu"):
         # Minimal sample to demonstrate logic
         sample_df = pd.DataFrame({
@@ -114,9 +117,16 @@ if 'df' in locals():
     st.success(f"Đã tính xong. {len(result)} dòng.")
     st.dataframe(result, use_container_width=True)
 
-    # Download
+    # --- Download CSV ---
     csv = result.to_csv(index=False).encode("utf-8")
     st.download_button("⬇️ Tải kết quả CSV", data=csv, file_name="inbound_suggestion.csv", mime="text/csv")
+
+    # --- Download Excel ---
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+        result.to_excel(writer, index=False, sheet_name="Inbound Plan")
+    excel_data = output.getvalue()
+    st.download_button("⬇️ Tải kết quả Excel", data=excel_data, file_name="inbound_suggestion.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
     st.caption("• Công thức: Inbound = Forecast(h) + Safety + Leadtime − (Stock + Inbound). Áp dụng MOQ/Pack-size nếu có.")
 else:
