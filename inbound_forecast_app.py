@@ -5,7 +5,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Inbound Planner", layout="wide")
 
-st.title("📦 Inbound Planner")
+st.title("📦 Hieu Ngan's Inbound Planner")
 
 with st.expander("ℹ️ Input data format"):
     st.markdown("""
