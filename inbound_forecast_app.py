@@ -16,18 +16,6 @@ st.markdown(
     color: #000000;
 }
 
-/* Title */
-h1 {
-  color: #000 !important;
-  text-align: center;
-  font-weight: 800 !important;
-}
-h1::after {
-  content:"";
-  display:block;width:80px;height:3px;margin:10px auto;
-  background: linear-gradient(90deg,#ff2f8f,#ff5aa7);
-  border-radius:2px;
-}
 
 h1 { color:#000000; text-align:center; font-size:42px !important; }
 h2,h3 { color:#000000; }
