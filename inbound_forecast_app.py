@@ -12,7 +12,7 @@ st.markdown(
 /* Nền và font toàn app */
 .stApp {
     background-color: #ffe6f0;
-    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-family: "Comic Sans MS";
     color: #000000;
 }
 
