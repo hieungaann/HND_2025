@@ -7,7 +7,7 @@ from io import BytesIO
 import math
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
-st.title("📦 Replenishment HND2025 — Input → Output.current & Output.ordered")
+st.title("📦 Hieu Ngan's Planner")
 
 # ---------------------------
 # Helpers
