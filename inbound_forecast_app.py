@@ -7,40 +7,291 @@ from io import BytesIO
 import math
 
 st.markdown(
-"""
-<style>
-/* Nền và font toàn app */
-.stApp {
-    background-color: #ffe6f0;
-    font-family: "Comic Sans MS";
-    color: #000000;
-}
 
-/* Title / Subheader */
-h1 { color:#000000; text-align:center; font-size:42px !important; }
-h2,h3 { color:#000000; }
+    """
 
-/* Buttons */
-div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
-div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); }
-.stDownloadButton button { background-color:#ff99cc; color:#000000; border-radius:12px; height:3em; font-size:18px; transition:0.3s; }
-.stDownloadButton button:hover { background-color:#ff4da6; transform: scale(1.05); }
+    <style>
 
-/* Alert box */
-.stAlert { border-radius:15px; padding:12px; font-size:16px; color:#000000; }
+    :root{
 
-/* Label / placeholder */
-label, .stMarkdown, div.stFileUploader span, .css-1y0tads { color:#000000 !important; }
+        --pink: #ff66b2;
 
-/* Input text / number / textarea */
-input[type="number"], input[type="text"], textarea {
-    color:#000000 !important;
-    background-color: #ffffff !important;
-}
-</style>
-""",
-unsafe_allow_html=True
+        --pink-strong: #ff3399;
+
+        --bg: #0a0a0d;          /* đen đậm */
+
+        --bg-2: #121217;        /* đen phụ */
+
+        --text: #f5f5f7;        /* chữ sáng */
+
+        --muted: #c8c8cf;       /* chữ phụ */
+
+        --border: #2a2a34;      /* viền chung */
+
+    }
+
+    /* Toàn bộ app */
+
+    .stApp {
+
+        background-color: var(--bg);
+
+        color: var(--text);
+
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    }
+
+    /* Title: nổi bật bằng weight & spacing, bỏ glow */
+
+    h1 {
+
+        color: var(--text);
+
+        text-align: center;
+
+        font-size: 44px !important;
+
+        font-weight: 800 !important;
+
+        letter-spacing: 0.3px;
+
+        margin-bottom: 0.4rem;
+
+    }
+
+    /* Gạch nhấn mảnh dưới tiêu đề */
+
+    h1::after{
+
+        content: "";
+
+        display: block;
+
+        width: 72px;
+
+        height: 3px;
+
+        margin: 10px auto 2px;
+
+        background: linear-gradient(90deg, var(--pink-strong), var(--pink));
+
+        border-radius: 2px;
+
+    }
+
+    /* Subheaders: ít hồng, đậm chữ */
+
+    h2, h3 {
+
+        color: var(--text);
+
+        font-weight: 700;
+
+        margin-top: 1.2rem;
+
+    }
+
+    /* Đoạn chữ thường: tăng contrast một chút */
+
+    p, li, span, label {
+
+        color: var(--text);
+
+    }
+
+    small, .markdown-text-container em {
+
+        color: var(--muted);
+
+    }
+
+    /* Buttons: nền đen, viền hồng, KHÔNG shadow/glow */
+
+    div.stButton > button,
+
+    .stDownloadButton button {
+
+        background: #0e0e12 !important;
+
+        color: var(--text) !important;
+
+        border: 2px solid var(--pink) !important;
+
+        border-radius: 12px !important;
+
+        height: 3em !important;
+
+        width: 100%;
+
+        font-size: 17px !important;
+
+        font-weight: 700 !important;
+
+        transition: border-color .2s ease, transform .15s ease, background-color .2s ease;
+
+        box-shadow: none !important;
+
+    }
+
+    /* Hover: vẫn đen, viền hồng đậm hơn, hơi “nhích” lên nhẹ */
+
+    div.stButton > button:hover,
+
+    .stDownloadButton button:hover {
+
+        background: #121217 !important;
+
+        border-color: var(--pink-strong) !important;
+
+        transform: translateY(-1px);
+
+    }
+
+    /* Active: nhấn xuống một chút, không glow */
+
+    div.stButton > button:active,
+
+    .stDownloadButton button:active {
+
+        transform: translateY(0);
+
+        background: #0c0c10 !important;
+
+    }
+
+    /* Alert/info/success/error: nền đen phụ, viền hồng mảnh, không shadow */
+
+    .stAlert {
+
+        background: var(--bg-2) !important;
+
+        color: var(--text) !important;
+
+        border-left: 3px solid var(--pink-strong) !important;
+
+        border-top: 1px solid var(--border) !important;
+
+        border-right: 1px solid var(--border) !important;
+
+        border-bottom: 1px solid var(--border) !important;
+
+        border-radius: 12px !important;
+
+        padding: 12px !important;
+
+        box-shadow: none !important;
+
+    }
+
+    /* Inputs: nền đen, viền xám; focus mới viền hồng */
+
+    .stTextInput>div>div>input,
+
+    .stDateInput>div>div>input,
+
+    .stNumberInput input,
+
+    .stSelectbox > div > div,
+
+    .stMultiselect > div > div,
+
+    .stTextArea textarea {
+
+        background-color: #111116 !important;
+
+        color: var(--text) !important;
+
+        border: 1px solid var(--border) !important;
+
+        border-radius: 10px !important;
+
+        box-shadow: none !important;
+
+    }
+
+    .stTextInput>div>div>input:focus,
+
+    .stDateInput>div>div>input:focus,
+
+    .stNumberInput input:focus,
+
+    .stSelectbox > div > div:focus-within,
+
+    .stMultiselect > div > div:focus-within,
+
+    .stTextArea textarea:focus {
+
+        border-color: var(--pink-strong) !important;
+
+        outline: none !important;
+
+    }
+
+    /* Dataframe/table: bỏ drop-shadow, tăng contrast border hàng */
+
+    .stDataFrame, .stTable {
+
+        filter: none !important;
+
+    }
+
+    .stDataFrame [data-testid="stStyledTable"] {
+
+        background-color: var(--bg-2) !important;
+
+        color: var(--text) !important;
+
+    }
+
+    .stDataFrame [data-testid="stStyledTable"] table {
+
+        border-collapse: collapse !important;
+
+    }
+
+    .stDataFrame [data-testid="stStyledTable"] th,
+
+    .stDataFrame [data-testid="stStyledTable"] td {
+
+        border-bottom: 1px solid #1c1c25 !important;
+
+    }
+
+    .stDataFrame [data-testid="stStyledTable"] th {
+
+        color: var(--text) !important;
+
+        font-weight: 800 !important;
+
+        background: #15151b !important;
+
+    }
+
+    .stDataFrame [data-testid="stStyledTable"] tr:hover td {
+
+        background: #15151b !important;
+
+    }
+
+    /* Sidebar: đen hơn, gọn */
+
+    section[data-testid="stSidebar"] {
+
+        background: #0b0b10 !important;
+
+        border-right: 1px solid var(--border) !important;
+
+    }
+
+    </style>
+
+    """,
+
+    unsafe_allow_html=True
+
 )
+
 
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
