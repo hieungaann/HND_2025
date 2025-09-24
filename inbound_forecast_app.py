@@ -260,22 +260,29 @@ if uploaded:
         with st.spinner("Calculating..."):
             out_current, out_ordered, date_cols, used_today = process_input(df_in, days_ahead=int(days_ahead)) 
 
-            # -------------------------
-            # Highlight SKU có ROP date cùng tuần
-            # -------------------------
-            df_current_display = out_current.copy()
-            df_current_display["ROP_date"] = pd.to_datetime(df_current_display["ROP date"], errors="coerce")
-            df_current_display["Week_num"] = df_current_display["ROP_date"].dt.to_period("W-MON")
-            highlight_weeks = df_current_display.groupby("Week_num")["SKU_code"].transform("count") > 1
+            # Copy dataframe để hiển thị
+df_current_display = out_current.copy()
 
-            def highlight_sku(s):
-                color = "background-color: Pink; font-weight: bold;"
-                return [color if highlight_weeks.iloc[i] else "" for i in range(len(s))]
+# Chuyển ROP date sang datetime
+df_current_display["ROP_date"] = pd.to_datetime(df_current_display["ROP date"], errors="coerce")
 
-            # Hiển thị với highlight
-            st.subheader("Output.current (preview)")
-            st.dataframe(df_current_display.style.apply(highlight_sku, subset=["SKU_code"]), use_container_width=True)
+# Lấy tuần (Monday = start of week)
+df_current_display["Week_num"] = df_current_display["ROP_date"].dt.to_period("W-MON")
 
+# Tìm tuần sớm nhất
+earliest_week = df_current_display["Week_num"].min()
+
+# Xác định row cần highlight: thuộc tuần sớm nhất
+highlight_mask = df_current_display["Week_num"] == earliest_week
+
+# Hàm highlight
+def highlight_sku(s):
+    color = "background-color: yellow; font-weight: bold;"
+    return [color if highlight_mask.iloc[i] else "" for i in range(len(s))]
+
+# Hiển thị bảng với highlight
+st.subheader("Output.current (preview)")
+st.dataframe(df_current_display.style.apply(highlight_sku, subset=["SKU_code"]), use_container_width=True)
 
         st.subheader("Output.current (preview)")
         st.dataframe(out_current.head(200), use_container_width=True)
