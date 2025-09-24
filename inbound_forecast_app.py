@@ -30,6 +30,11 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
   border-radius:10px !important;
 }
 
+[data-testid="stFileUploader"] button:hover {
+  border-color:#ff2f8f !important;
+  background:#1c1c1c !important;
+}
+
 /* MỚI: label + placeholder widget */
 label, .stMarkdown, div.stFileUploader span {
 }
