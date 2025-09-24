@@ -26,7 +26,7 @@ st.markdown(
 
     /* Subheaders */
     h2, h3 {
-        color: #ff66b2;
+        color: #000000;  /* chữ h2, h3 màu đen */
     }
 
     /* Buttons */
