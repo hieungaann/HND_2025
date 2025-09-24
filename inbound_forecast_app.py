@@ -25,7 +25,7 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
 
 [data-testid="stFileUploader"] button {
   background:#111 !important;
-  color:#000 !important;
+  color:#fff !important;
   border:2px solid #ff5aa7 !important;
   border-radius:10px !important;
 }
