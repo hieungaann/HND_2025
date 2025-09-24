@@ -95,7 +95,7 @@ def to_excel(df_input, output_current, output_ordered):
 
 
 # ===== Streamlit App =====
-st.title("📦 Replenishment Auto Tool")
+st.title("📦 Hieu Ngan's Planner")
 
 uploaded_file = st.file_uploader("Upload Excel file (sheet Input)", type=["xlsx"])
 
