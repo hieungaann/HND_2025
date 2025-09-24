@@ -9,7 +9,6 @@ import math
 st.markdown(
 """
 <style>
-
 /* Code chips */
 [data-testid="stMarkdownContainer"] code {
   background:#ffd6e8 !important;     /* pastel hồng */
@@ -18,19 +17,15 @@ st.markdown(
   border-radius:6px !important;
   padding:0 6px !important;
 }
-
 .stApp {
     background-color: #ffe6f0;
     font-family: "Segoe UI", cursive, sans-serif;
     color: #000000;
 }
-
 h1 { color:#000000; text-align:center; font-size:42px !important; }
 h2,h3 { color:#000000; }
-
 /* Label / placeholder */
 label, .stMarkdown { color:#000000 !important; }
-
 
 div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
 div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); }
@@ -49,7 +44,6 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
   border-color:#ff2f8f !important;
   background:#1c1c1c !important;
 }
-
 /* Alert */
 .stAlert {
   background:#ff2f8f !important;        /* hồng */
@@ -58,16 +52,13 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
   border-radius:10px !important;
   padding:10px !important;
 }
-
 /* MỚI: label + placeholder widget */
 label, .stMarkdown, div.stFileUploader span {
 }
-
 </style>
 """,
 unsafe_allow_html=True
 )
-
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
 st.title("📦 Hieu Ngan's Planner")
