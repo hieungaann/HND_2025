@@ -11,36 +11,72 @@ st.markdown(
 <style>
 /* Nền và font toàn app */
 .stApp {
-    background-color: #ffe6f0;
-    font-family: "Comic Sans MS", cursive, sans-serif;
-    color: #000000;
+    background-color: #ffe6f0;  /* nền hồng nhạt */
+    font-family: "Arial", sans-serif;
+    color: #000000;  /* chữ đen */
 }
 
 /* Title / Subheader */
-h1 { color:#000000; text-align:center; font-size:42px !important; }
-h2,h3 { color:#000000; }
+h1, h2, h3, h4, h5, h6 {
+    color: #000000;
+    font-family: "Arial", sans-serif;
+}
 
 /* Buttons */
-div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
-div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); }
-.stDownloadButton button { background-color:#ff99cc; color:#000000; border-radius:12px; height:3em; font-size:18px; transition:0.3s; }
-.stDownloadButton button:hover { background-color:#ff4da6; transform: scale(1.05); }
+div.stButton > button {
+    background-color: #ff66b2;
+    color: #000000;
+    border-radius: 12px;
+    height: 3em;
+    width: 100%;
+    font-size: 18px;
+    font-family: "Arial", sans-serif;
+    transition: 0.3s;
+}
+div.stButton > button:hover {
+    background-color: #ff3385;
+    transform: scale(1.05);
+}
+.stDownloadButton button {
+    background-color: #ff99cc;
+    color: #000000;
+    border-radius: 12px;
+    height: 3em;
+    font-size: 18px;
+    font-family: "Arial", sans-serif;
+    transition: 0.3s;
+}
+.stDownloadButton button:hover {
+    background-color: #ff4da6;
+    transform: scale(1.05);
+}
 
 /* Alert box */
-.stAlert { border-radius:15px; padding:12px; font-size:16px; color:#000000; }
+.stAlert {
+    border-radius: 15px;
+    padding: 12px;
+    font-size: 16px;
+    color: #000000;
+    font-family: "Arial", sans-serif;
+}
 
-/* Label / placeholder */
-label, .stMarkdown, div.stFileUploader span, .css-1y0tads { color:#000000 !important; }
+/* Labels, placeholders, markdown */
+label, .stMarkdown, div.stFileUploader span, .css-1y0tads {
+    color: #000000 !important;
+    font-family: "Arial", sans-serif !important;
+}
 
 /* Input text / number / textarea */
 input[type="number"], input[type="text"], textarea {
-    color:#000000 !important;
+    color: #000000 !important;
     background-color: #ffffff !important;
+    font-family: "Arial", sans-serif !important;
 }
 </style>
 """,
 unsafe_allow_html=True
 )
+
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
 st.title("📦 Hieu Ngan's Planner")
