@@ -15,6 +15,20 @@ st.markdown(
     font-family: "Segoe UI", cursive, sans-serif;
     color: #000000;
 }
+
+/* Title */
+h1 {
+  color: #000 !important;
+  text-align: center;
+  font-weight: 800 !important;
+}
+h1::after {
+  content:"";
+  display:block;width:80px;height:3px;margin:10px auto;
+  background: linear-gradient(90deg,#ff2f8f,#ff5aa7);
+  border-radius:2px;
+}
+
 h1 { color:#000000; text-align:center; font-size:42px !important; }
 h2,h3 { color:#000000; }
 div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
