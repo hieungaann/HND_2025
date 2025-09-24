@@ -64,6 +64,39 @@ label, .stMarkdown, div.stFileUploader span {
 }
 
 
+/* Chữ trong các alert: success, info, warning, error */
+div.stAlert, 
+div.stAlert > div[data-testid="stMessage"] {
+    color: #000 !important;        /* chữ đen */
+    background-color: #ffe6f0 !important;  /* nền hồng nhạt, hoặc đổi tùy ý */
+    border-radius: 10px !important;
+    padding: 10px !important;
+}
+
+/* Nếu muốn riêng success/info/error */
+div.stAlert.stAlert-success {
+    color: #000 !important;
+    background-color: #d4f7d4 !important;  /* xanh nhạt cho success */
+}
+
+div.stAlert.stAlert-info {
+    color: #000 !important;
+    background-color: #f0f0f0 !important;  /* xám nhạt cho info */
+}
+
+div.stAlert.stAlert-error {
+    color: #000 !important;
+    background-color: #ffd6d6 !important;  /* đỏ nhạt cho error */
+}
+
+div.stAlert.stAlert-warning {
+    color: #000 !important;
+    background-color: #fff4cc !important;  /* vàng nhạt cho warning */
+}
+
+
+
+
 </style>
 """,
 unsafe_allow_html=True
