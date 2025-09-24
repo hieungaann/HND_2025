@@ -9,14 +9,6 @@ import math
 st.markdown(
 """
 <style>
-/* Code chips */
-[data-testid="stMarkdownContainer"] code {
-  background:#ffd6e8 !important;     /* pastel hồng */
-  color:#000 !important;             /* chữ đen */
-  border:1px solid #ff5aa7 !important;
-  border-radius:6px !important;
-  padding:0 6px !important;
-}
 .stApp {
     background-color: #ffe6f0;
     font-family: "Segoe UI", cursive, sans-serif;
@@ -32,6 +24,15 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
 .stDownloadButton button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; font-size:18px; transition:0.3s; }
 .stDownloadButton button:hover { background-color:#ff3385; transform: scale(1.05); }
 .stAlert { border-radius:15px; padding:12px; font-size:16px; color:#000000; }
+
+/* Code chips */
+[data-testid="stMarkdownContainer"] code {
+  background:#ffd6e8 !important;     /* pastel hồng */
+  color:#000 !important;             /* chữ đen */
+  border:1px solid #ff5aa7 !important;
+  border-radius:6px !important;
+  padding:0 6px !important;
+}
 
 [data-testid="stFileUploader"] button {
   background:#111 !important;
