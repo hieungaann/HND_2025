@@ -35,17 +35,14 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
   background:#1c1c1c !important;
 }
 
-/* File chip */
-[data-testid="stFileUploadList"] > div {
-  background:#fff !important;        /* trắng trên nền hồng */
-  color:#000 !important;             /* chữ đen */
-  border:1px solid #ff5aa7 !important;
-  border-left:4px solid #ff2f8f !important;
+/* Alert */
+.stAlert {
+  background:#111 !important;        /* đen */
+  color:#fff !important;             /* chữ trắng */
+  border-left:5px solid #ff5aa7 !important;
   border-radius:10px !important;
-  padding:6px 10px !important;
+  padding:10px !important;
 }
-
-
 
 
 /* MỚI: label + placeholder widget */
