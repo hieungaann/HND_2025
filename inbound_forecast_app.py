@@ -6,41 +6,104 @@ from datetime import datetime, timedelta
 from io import BytesIO
 import math
 
-st.markdown(
-"""
+# Force PINK background + highlight important blocks
+st.markdown("""
 <style>
-/* Nền và font toàn app */
-.stApp {
-    background-color: #ffe6f0;
-    font-family: "Comic Sans MS", cursive, sans-serif;
-    color: #000000;
+/* === 0) ÉP NỀN HỒNG NHẠT TOÀN APP (ghi đè mọi theme) === */
+html, body,
+.stApp,
+[data-testid="stAppViewContainer"],
+main, .main {
+  background: #ffe6f0 !important;   /* HỒNG NHẠT */
+  color: #111217 !important;         /* chữ đen xám để dễ đọc */
 }
 
-/* Title / Subheader */
-h1 { color:#000000; text-align:center; font-size:42px !important; }
-h2,h3 { color:#000000; }
+/* Tiêu đề giữ đậm, underline hồng */
+h1{
+  color:#111217 !important;
+  text-align:center;
+  font-weight:800 !important;
+}
+h1::after{
+  content:"";
+  display:block;width:84px;height:3px;margin:10px auto 2px;
+  background:linear-gradient(90deg,#ff2f8f,#ff5aa7);border-radius:2px;
+}
 
-/* Buttons */
-div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
-div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); }
-.stDownloadButton button { background-color:#ff99cc; color:#000000; border-radius:12px; height:3em; font-size:18px; transition:0.3s; }
-.stDownloadButton button:hover { background-color:#ff4da6; transform: scale(1.05); }
+/* === 1) FILE UPLOADER – dropzone nổi bật trên nền hồng === */
+[data-testid="stFileUploader"]{ border-radius:14px !important; }
+[data-testid="stFileUploaderDropzone"]{
+  background:#1f2027 !important;                /* mảng tối để nổi bật */
+  border:2px dashed #ff5aa7 !important;         /* viền hồng */
+  border-radius:14px !important;
+  box-shadow:0 6px 18px rgba(255,42,143,.18) !important;
+}
+[data-testid="stFileUploaderDropzone"]:hover{
+  border-color:#ff2f8f !important;
+  box-shadow:0 8px 22px rgba(255,42,143,.26) !important;
+}
+[data-testid="stFileUploaderDropzone"] *{ color:#f4f5f7 !important; }
+[data-testid="stFileUploader"] button{
+  background:#0f1014 !important;color:#f5f6f8 !important;
+  border:2px solid #ff5aa7 !important;border-radius:10px !important;
+}
+[data-testid="stFileUploader"] button:hover{ border-color:#ff2f8f !important; }
 
-/* Alert box */
-.stAlert { border-radius:15px; padding:12px; font-size:16px; color:#000000; }
+/* === 2) CHIP “file đã chọn” – thẻ trắng viền hồng === */
+[data-testid="stFileUploadList"] > div{
+  background:#ffffff !important;color:#111217 !important;
+  border:1px solid rgba(255,90,167,.55) !important;
+  border-left:4px solid #ff2f8f !important;
+  border-radius:12px !important;padding:6px 10px !important;
+  box-shadow:0 4px 12px rgba(0,0,0,.06) !important;
+}
+[data-testid="stFileUploadList"] svg{ color:#ff2f8f !important; }
 
-/* Label / placeholder */
-label, .stMarkdown, div.stFileUploader span, .css-1y0tads { color:#000000 !important; }
+/* === 3) ALERT (success/info/error) – card trắng nổi bật === */
+.stAlert{
+  background:#ffffff !important;color:#111217 !important;
+  border:1px solid rgba(255,90,167,.40) !important;
+  border-left:5px solid #ff2f8f !important;border-radius:12px !important;
+  box-shadow:0 6px 18px rgba(0,0,0,.06) !important;
+}
 
-/* Input text / number / textarea */
-input[type="number"], input[type="text"], textarea {
-    color:#000000 !important;
-    background-color: #ffffff !important;
+/* === 4) BẢNG – card trắng viền hồng nhẹ để bật lên nền hồng === */
+[data-testid="stStyledTable"]{
+  background:#ffffff !important;color:#111217 !important;
+  border:1px solid rgba(255,90,167,.35) !important; border-radius:14px !important;
+  overflow:hidden;
+}
+[data-testid="stStyledTable"] th{
+  background:#f6f7fb !important;color:#111217 !important;
+  font-weight:800 !important;border-bottom:2px solid #ff5aa7 !important;
+}
+[data-testid="stStyledTable"] td{
+  border-bottom:1px solid #ececf2 !important;
+}
+[data-testid="stStyledTable"] tbody tr:nth-child(odd) td{ background:#fbfbfe !important; }
+[data-testid="stStyledTable"] tbody tr:hover td{ background:#f2f3fb !important; }
+
+/* Inputs: viền hồng khi focus cho đồng bộ */
+.stTextInput>div>div>input,
+.stNumberInput input,
+.stDateInput>div>div>input,
+.stTextArea textarea,
+.stSelectbox > div > div,
+.stMultiselect > div > div{
+  background:#ffffff !important;color:#111217 !important;
+  border:1px solid #e6e6ee !important;border-radius:10px !important;
+}
+.stTextInput>div>div>input:focus,
+.stNumberInput input:focus,
+.stDateInput>div>div>input:focus,
+.stTextArea textarea:focus,
+.stSelectbox > div > div:focus-within,
+.stMultiselect > div > div:focus-within{
+  border-color:#ff2f8f !important; outline:none !important;
 }
 </style>
-""",
-unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
+
 
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
