@@ -63,6 +63,7 @@ st.markdown(
         border-radius: 15px;
         padding: 12px;
         font-size: 16px;
+        color: #000000; /* chữ trong alert đen */
     }
 
     </style>
