@@ -47,7 +47,7 @@ st.markdown(
     /* Download button */
     .stDownloadButton button {
         background-color: #ff99cc;
-        color: white;
+        color: #000000;  /* chữ trên button đen */
         border-radius: 12px;
         height: 3em;
         font-size: 18px;
