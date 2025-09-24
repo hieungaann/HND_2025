@@ -269,8 +269,8 @@ if uploaded:
             highlight_weeks = df_current_display.groupby("Week_num")["SKU_code"].transform("count") > 1
 
             def highlight_sku(s):
-            color = "background-color: yellow; font-weight: bold;"
-            return [color if highlight_weeks.iloc[i] else "" for i in range(len(s))]
+                color = "background-color: yellow; font-weight: bold;"
+                return [color if highlight_weeks.iloc[i] else "" for i in range(len(s))]
 
             # Hiển thị với highlight
             st.subheader("Output.current (preview)")
