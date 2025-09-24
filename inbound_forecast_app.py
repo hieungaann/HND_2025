@@ -6,35 +6,129 @@ from datetime import datetime, timedelta
 from io import BytesIO
 import math
 
-st.markdown(
-"""
+st.markdown("""
 <style>
-/* Giữ CSS cũ của bạn */
-.stApp {
-    background-color: #ffe6f0;
-    font-family: "Comic Sans MS", cursive, sans-serif;
-    color: #000000;
+/* Nền toàn app */
+html, body, .stApp {
+  background: #ffe6f0 !important;   /* hồng nhạt */
+  color: #000000 !important;        /* chữ đen rõ */
+  font-family: "Segoe UI", Roboto, sans-serif;
 }
-h1 { color:#000000; text-align:center; font-size:42px !important; }
-h2,h3 { color:#000000; }
-div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
-div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); }
-.stDownloadButton button { background-color:#ff99cc; color:#000000; border-radius:12px; height:3em; font-size:18px; transition:0.3s; }
-.stDownloadButton button:hover { background-color:#ff4da6; transform: scale(1.05); }
-.stAlert { border-radius:15px; padding:12px; font-size:16px; color:#000000; }
 
-/* MỚI: label + placeholder widget */
-label, .stMarkdown, div.stFileUploader span {
-    color: #000000 !important;
+/* Title */
+h1 {
+  color: #000 !important;
+  text-align: center;
+  font-weight: 800 !important;
 }
-input[type="number"], input[type="text"], textarea {
-    color: #000000 !important;
+h1::after {
+  content:"";
+  display:block;width:80px;height:3px;margin:10px auto;
+  background: linear-gradient(90deg,#ff2f8f,#ff5aa7);
+  border-radius:2px;
+}
+
+/* File uploader */
+[data-testid="stFileUploaderDropzone"] {
+  background:#111 !important;        /* đen */
+  border:2px dashed #ff5aa7 !important;
+  border-radius:14px !important;
+}
+[data-testid="stFileUploaderDropzone"] * {
+  color:#fff !important;             /* chữ trắng trên nền đen */
+}
+[data-testid="stFileUploader"] button {
+  background:#111 !important;
+  color:#fff !important;
+  border:2px solid #ff5aa7 !important;
+  border-radius:10px !important;
+}
+[data-testid="stFileUploader"] button:hover {
+  border-color:#ff2f8f !important;
+  background:#1c1c1c !important;
+}
+
+/* File chip */
+[data-testid="stFileUploadList"] > div {
+  background:#fff !important;        /* trắng trên nền hồng */
+  color:#000 !important;             /* chữ đen */
+  border:1px solid #ff5aa7 !important;
+  border-left:4px solid #ff2f8f !important;
+  border-radius:10px !important;
+  padding:6px 10px !important;
+}
+
+/* Alert */
+.stAlert {
+  background:#111 !important;        /* đen */
+  color:#fff !important;             /* chữ trắng */
+  border-left:5px solid #ff5aa7 !important;
+  border-radius:10px !important;
+  padding:10px !important;
+}
+
+/* Input */
+.stTextInput>div>div>input,
+.stNumberInput input,
+.stDateInput>div>div>input,
+.stTextArea textarea {
+  background:#fff !important;        /* trắng */
+  color:#000 !important;             /* chữ đen */
+  border:1px solid #ffb6d0 !important;
+  border-radius:8px !important;
+}
+.stTextInput>div>div>input:focus,
+.stNumberInput input:focus,
+.stDateInput>div>div>input:focus,
+.stTextArea textarea:focus {
+  border-color:#ff2f8f !important;
+}
+
+/* Code chips */
+[data-testid="stMarkdownContainer"] code {
+  background:#ffd6e8 !important;     /* pastel hồng */
+  color:#000 !important;             /* chữ đen */
+  border:1px solid #ff5aa7 !important;
+  border-radius:6px !important;
+  padding:0 6px !important;
+}
+
+/* Dataframe */
+[data-testid="stStyledTable"] {
+  background:#111 !important;        /* đen */
+  color:#fff !important;             /* chữ trắng */
+  border:1px solid #ff5aa7 !important;
+  border-radius:12px !important;
+}
+[data-testid="stStyledTable"] th {
+  background:#1c1c1c !important;
+  color:#ff5aa7 !important;          /* header hồng */
+  font-weight:800 !important;
+}
+[data-testid="stStyledTable"] td {
+  border-bottom:1px solid #2a2a2a !important;
+}
+[data-testid="stStyledTable"] tbody tr:nth-child(odd) td {
+  background:#161616 !important;
+}
+[data-testid="stStyledTable"] tbody tr:hover td {
+  background:#222 !important;
+}
+
+/* Buttons */
+div.stButton > button, .stDownloadButton button {
+  background:#111 !important;        /* đen */
+  color:#fff !important;             /* chữ trắng */
+  border:2px solid #ff5aa7 !important;
+  border-radius:12px !important;
+  font-weight:700 !important;
+}
+div.stButton > button:hover, .stDownloadButton button:hover {
+  background:#1c1c1c !important;
+  border-color:#ff2f8f !important;
 }
 </style>
-""",
-unsafe_allow_html=True
-)
-
+""", unsafe_allow_html=True)
 
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
