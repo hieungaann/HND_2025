@@ -6,70 +6,80 @@ from datetime import datetime, timedelta
 from io import BytesIO
 import math
 
-# Add CSS for pink cute theme
 st.markdown(
-    """
-    <style>
-    /* Toàn bộ nền app */
-    .stApp {
-        background-color: #ffe6f0; /* hồng nhạt */
-        font-family: "Comic Sans MS", cursive, sans-serif;
-        color: #000000; /* chữ mặc định đen */
-    }
+"""
+<style>
+/* ===========================
+   Toàn bộ app
+   =========================== */
+.stApp {
+    background-color: #ffe6f0;   /* nền hồng nhạt */
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    color: #000000;              /* chữ mặc định đen */
+}
 
-    /* Title */
-    h1 {
-        color: #000000;  /* chữ h1 màu đen */
-        text-align: center;
-        font-size: 42px !important;
-    }
+/* ===========================
+   Title / Subheader
+   =========================== */
+h1 { color:#000000; text-align:center; font-size:42px !important; }
+h2,h3 { color:#000000; }
 
-    /* Subheaders */
-    h2, h3 {
-        color: #000000;  /* chữ h2, h3 màu đen */
-    }
+/* ===========================
+   Buttons
+   =========================== */
+div.stButton > button {
+    background-color:#ff66b2;
+    color:#000000;
+    border-radius:12px;
+    height:3em;
+    width:100%;
+    font-size:18px;
+    transition:0.3s;
+}
+div.stButton > button:hover {
+    background-color:#ff3385;
+    transform: scale(1.05);
+}
 
-    /* Buttons */
-    div.stButton > button {
-        background-color: #ff66b2;
-        color: #000000;  /* chữ trên button đen */
-        border-radius: 12px;
-        height: 3em;
-        width: 100%;
-        font-size: 18px;
-        transition: 0.3s;
-    }
-    div.stButton > button:hover {
-        background-color: #ff3385;
-        transform: scale(1.05);
-    }
+/* Download button */
+.stDownloadButton button {
+    background-color:#ff99cc;
+    color:#000000;
+    border-radius:12px;
+    height:3em;
+    font-size:18px;
+    transition:0.3s;
+}
+.stDownloadButton button:hover {
+    background-color:#ff4da6;
+    transform: scale(1.05);
+}
 
-    /* Download button */
-    .stDownloadButton button {
-        background-color: #ff99cc;
-        color: #000000;  /* chữ trên button đen */
-        border-radius: 12px;
-        height: 3em;
-        font-size: 18px;
-        transition: 0.3s;
-    }
-    .stDownloadButton button:hover {
-        background-color: #ff4da6;
-        transform: scale(1.05);
-    }
+/* ===========================
+   Alerts (info, error, success)
+   =========================== */
+.stAlert {
+    border-radius:15px;
+    padding:12px;
+    font-size:16px;
+    color:#000000;
+}
 
-    /* Info, error, success box */
-    .stAlert {
-        border-radius: 15px;
-        padding: 12px;
-        font-size: 16px;
-        color: #000000; /* chữ trong alert đen */
-    }
-
-    </style>
-    """,
-    unsafe_allow_html=True
+/* ===========================
+   Input / Number / File Uploader / Placeholder / Label
+   =========================== */
+label, .stMarkdown, div.stFileUploader span {
+    color:#000000 !important;
+}
+input[type="number"], input[type="text"], textarea {
+    color:#000000 !important;
+    background-color: #ffffff !important;  /* optional: nền trắng cho input */
+}
+</style>
+""",
+unsafe_allow_html=True
 )
+
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
 st.title("📦 Hieu Ngan's Planner")
