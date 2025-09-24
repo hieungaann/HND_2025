@@ -14,6 +14,7 @@ st.markdown(
     .stApp {
         background-color: #ffe6f0; /* hồng nhạt */
         font-family: "Comic Sans MS", cursive, sans-serif;
+        color: #000000; /* chữ mặc định đen */
     }
 
     /* Title */
