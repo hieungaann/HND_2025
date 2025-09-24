@@ -10,7 +10,6 @@ st.markdown(
 """
 <style>
 
-
 /* Code chips */
 [data-testid="stMarkdownContainer"] code {
   background:#ffd6e8 !important;     /* pastel hồng */
@@ -19,6 +18,29 @@ st.markdown(
   border-radius:6px !important;
   padding:0 6px !important;
 }
+
+/* Dataframe */
+[data-testid="stStyledTable"] {
+  background:#111 !important;        /* đen */
+  color:#fff !important;             /* chữ trắng */
+  border:1px solid #ff5aa7 !important;
+  border-radius:12px !important;
+}
+[data-testid="stStyledTable"] th {
+  background:#1c1c1c !important;
+  color:#ff5aa7 !important;          /* header hồng */
+  font-weight:800 !important;
+}
+[data-testid="stStyledTable"] td {
+  border-bottom:1px solid #2a2a2a !important;
+}
+[data-testid="stStyledTable"] tbody tr:nth-child(odd) td {
+  background:#161616 !important;
+}
+[data-testid="stStyledTable"] tbody tr:hover td {
+  background:#222 !important;
+}
+
 
 
 /* Giữ CSS cũ của bạn */
