@@ -23,6 +23,14 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
 .stDownloadButton button:hover { background-color:#ff4da6; transform: scale(1.05); }
 .stAlert { border-radius:15px; padding:12px; font-size:16px; color:#000000; }
 
+[data-testid="stFileUploaderDropzone"] {
+  background:#111 !important;        /* đen */
+  border:2px dashed #ff5aa7 !important;
+  border-radius:14px !important;
+}
+
+
+
 [data-testid="stFileUploader"] button {
   background:#111 !important;
   color:#fff !important;
