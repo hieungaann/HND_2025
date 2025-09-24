@@ -44,6 +44,16 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
   padding:10px !important;
 }
 
+/* Input */
+.stTextInput>div>div>input,
+.stNumberInput input,
+.stDateInput>div>div>input,
+.stTextArea textarea {
+  background:#fff !important;        /* trắng */
+  color:#000 !important;             /* chữ đen */
+  border:1px solid #ffb6d0 !important;
+  border-radius:8px !important;
+}
 
 /* MỚI: label + placeholder widget */
 label, .stMarkdown, div.stFileUploader span {
