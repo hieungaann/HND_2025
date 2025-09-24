@@ -12,7 +12,7 @@ st.markdown(
 /* Giữ CSS cũ của bạn */
 .stApp {
     background-color: #ffe6f0;
-    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-family: "Segoe UI", cursive, sans-serif;
     color: #000000;
 }
 h1 { color:#000000; text-align:center; font-size:42px !important; }
