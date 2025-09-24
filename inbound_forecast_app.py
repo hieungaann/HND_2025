@@ -198,10 +198,10 @@ if uploaded:
         st.error("Missing required columns in your Input sheet: " + ", ".join(missing))
         st.stop()
 
-    st.success("Input read OK. Preview:")
+    st.success("Input read OK. Preview result:")
     st.dataframe(df_in.head(10))
 
-    if st.button("Run & Generate Outputs"):
+    if st.button("🚀 Run code & Generate Outputs"):
         with st.spinner("Calculating..."):
             out_current, out_ordered, date_cols, used_today = process_input(df_in, days_ahead=int(days_ahead))
 
@@ -221,6 +221,6 @@ if uploaded:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
-        st.success("Done — file ready to download.")
+        st.success("Hieu Ngan Done — file ready to download.")
 else:
     st.info("Please upload an Excel (.xlsx) file that contains a sheet named 'Input'.")
