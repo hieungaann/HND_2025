@@ -1,92 +1,124 @@
-import pandas as pd
-import numpy as np
 import streamlit as st
+import pandas as pd
 from datetime import datetime, timedelta
-import io
+from io import BytesIO
 
-st.set_page_config(page_title="📦 HND Replenishment Planner", layout="wide")
+# ===== Function xử lý =====
+def process_file(df_input, days_ahead=30):
+    df_input["Upcoming date"] = pd.to_datetime(df_input["Upcoming date"], errors="coerce")
 
-st.title("📦 Hieu Ngan's Replenishment Planner")
-
-uploaded = st.file_uploader("Upload Excel (Replenishment Auto.xlsx)", type=["xlsx"])
-
-if uploaded:
-    # Đọc sheet Input
-    df_input = pd.read_excel(uploaded, sheet_name="Input")
-
-    # Xác định hôm nay
     today = datetime.today().date()
+    dates = [today + timedelta(days=i) for i in range(days_ahead + 1)]
+    date_cols = [d.strftime("%d-%b-%Y") for d in dates]
 
-    # Clone lại input cho output
-    df_out = df_input.copy()
+    # --- Output.current ---
+    output_current = df_input.copy()
+    ROP_dates, Order_qtys, stocks_matrix = [], [], []
 
-    # Đảm bảo format ngày cho Upcoming date
-    if "Upcoming date" in df_out.columns:
-        df_out["Upcoming date"] = pd.to_datetime(df_out["Upcoming date"], errors="coerce").dt.date
+    for _, row in df_input.iterrows():
+        available = row["Available stock"]
+        upcoming_stock = row["Upcoming stock"]
+        upcoming_date = row["Upcoming date"].date() if pd.notnull(row["Upcoming date"]) else None
+        forecast = row["Forecast OB/day"]
+        leadtime = int(row["Leadtime (day)"])
+        doc = int(row["DOC"])
 
-    # Tạo các cột ngày (today → today+30)
-    date_cols = [(today + timedelta(days=i)) for i in range(31)]
+        stock_list, current_stock = [], available
+        oos_date = None
 
-    # Khởi tạo stock projection
-    proj = []
-    for _, row in df_out.iterrows():
-        daily_fc = row["Forecast OB/day"]
-        stock = row["Available stock"]
+        for d in dates:
+            # bán hàng
+            current_stock -= forecast
+            # cộng thêm incoming
+            if upcoming_date and d == upcoming_date:
+                current_stock += upcoming_stock
+            stock_list.append(current_stock)
+            if current_stock <= 0 and oos_date is None:
+                oos_date = d
 
-        sku_proj = {}
-        for d in date_cols:
-            # Trừ forecast trước (cuối ngày)
-            stock -= daily_fc
-
-            # Nếu có inbound đúng ngày này → cộng thêm
-            if pd.notna(row.get("Upcoming stock", None)) and pd.notna(row.get("Upcoming date", None)):
-                if d == row["Upcoming date"]:
-                    stock += row["Upcoming stock"]
-
-            # Lưu stock cuối ngày
-            sku_proj[d] = max(stock, 0)
-
-        proj.append(sku_proj)
-
-    df_proj = pd.DataFrame(proj)
-    df_proj.columns = [d.strftime("%d-%b") for d in df_proj.columns]  # format cột ngày đẹp
-
-    # Tính ROP date
-    rop_dates = []
-    for idx, row in df_proj.iterrows():
-        first_zero = None
-        for d in df_proj.columns:
-            if row[d] <= 0:
-                # parse date từ tên cột
-                first_zero = datetime.strptime(d + f"-{today.year}", "%d-%b-%Y").date()
-                break
-        if first_zero:
-            leadtime = int(df_out.loc[idx, "Leadtime (day)"])
-            rop_dates.append(first_zero - timedelta(days=leadtime))
+        # ROP date
+        if oos_date:
+            rop_date = oos_date - timedelta(days=leadtime + 1)
+            ROP_dates.append(rop_date.strftime("%d-%b-%Y"))
         else:
-            rop_dates.append(None)
+            ROP_dates.append(None)
 
-    df_out["ROP date"] = rop_dates
+        # Order Qty
+        Order_qtys.append(forecast * (leadtime + doc))
+        stocks_matrix.append(stock_list)
 
-    # Tính Order Qty
-    df_out["Order Qty"] = df_out["Forecast OB/day"] * df_out["DOC"]
+    output_current["ROP date"] = ROP_dates
+    output_current["Order Qty"] = Order_qtys
+    df_stock = pd.DataFrame(stocks_matrix, columns=date_cols)
+    output_current = pd.concat([output_current, df_stock], axis=1)
 
-    # Ghép kết quả cuối
-    result = pd.concat([df_out, df_proj], axis=1)
+    # --- Output.ordered ---
+    output_ordered = df_input.copy()
+    output_ordered["ROP date"] = ROP_dates
+    output_ordered["Order Qty"] = Order_qtys
 
-    st.success(f"✅ Đã tính xong Output.current cho {len(result)} SKU")
-    st.dataframe(result, use_container_width=True)
+    stocks_matrix_ordered = []
+    for idx, row in df_input.iterrows():
+        available = row["Available stock"]
+        upcoming_stock = row["Upcoming stock"]
+        upcoming_date = row["Upcoming date"].date() if pd.notnull(row["Upcoming date"]) else None
+        forecast = row["Forecast OB/day"]
+        leadtime = int(row["Leadtime (day)"])
+        doc = int(row["DOC"])
+        rop_date_str = ROP_dates[idx]
+        rop_date = datetime.strptime(rop_date_str, "%d-%b-%Y").date() if rop_date_str else None
+        order_qty = Order_qtys[idx]
 
-    # Xuất Excel
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-        result.to_excel(writer, sheet_name="Output.current", index=False)
-    st.download_button(
-        "⬇️ Tải Output.current",
-        data=output.getvalue(),
-        file_name="Output.current.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    )
+        stock_list, current_stock = [], available
+        for d in dates:
+            current_stock -= forecast
+            if upcoming_date and d == upcoming_date:
+                current_stock += upcoming_stock
+            if rop_date and d == rop_date + timedelta(days=leadtime):
+                current_stock += order_qty
+            stock_list.append(current_stock)
+        stocks_matrix_ordered.append(stock_list)
 
-else:
-    st.info("👉 Hãy upload file Excel `Replenishment Auto.xlsx` để bắt đầu.")
+    df_stock_ordered = pd.DataFrame(stocks_matrix_ordered, columns=date_cols)
+    output_ordered = pd.concat([output_ordered, df_stock_ordered], axis=1)
+
+    return output_current, output_ordered
+
+
+def to_excel(df_input, output_current, output_ordered):
+    buffer = BytesIO()
+    with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
+        df_input.to_excel(writer, sheet_name="Input", index=False)
+        output_current.to_excel(writer, sheet_name="Output.current", index=False)
+        output_ordered.to_excel(writer, sheet_name="Output.ordered", index=False)
+    return buffer
+
+
+# ===== Streamlit App =====
+st.title("📦 Replenishment Auto Tool")
+
+uploaded_file = st.file_uploader("Upload Excel file (sheet Input)", type=["xlsx"])
+
+if uploaded_file:
+    df_input = pd.read_excel(uploaded_file, sheet_name="Input")
+
+    st.subheader("📑 Input Data")
+    st.dataframe(df_input.head())
+
+    if st.button("🚀 Run Simulation"):
+        output_current, output_ordered = process_file(df_input, days_ahead=30)
+
+        st.subheader("✅ Output.current")
+        st.dataframe(output_current.head())
+
+        st.subheader("✅ Output.ordered")
+        st.dataframe(output_ordered.head())
+
+        result_file = to_excel(df_input, output_current, output_ordered)
+
+        st.download_button(
+            label="💾 Download Result Excel",
+            data=result_file,
+            file_name="Replenishment_Result.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
