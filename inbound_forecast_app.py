@@ -4,7 +4,7 @@ import streamlit as st
 from datetime import datetime, timedelta
 import io
 
-st.set_page_config(page_title="📦 Replenishment Planner", layout="wide")
+st.set_page_config(page_title="📦 HND Replenishment Planner", layout="wide")
 
 st.title("📦 Hieu Ngan's Replenishment Planner")
 
