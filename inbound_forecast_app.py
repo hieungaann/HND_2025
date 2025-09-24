@@ -18,7 +18,7 @@ st.markdown(
 
     /* Title */
     h1 {
-        color: #000000;
+        color: #ff3399;
         text-align: center;
         font-size: 42px !important;
     }
