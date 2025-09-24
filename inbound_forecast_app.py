@@ -9,13 +9,26 @@ import math
 st.markdown(
 """
 <style>
-
-/* Nền toàn app */
-html, body, .stApp {
-  background: #ffe6f0 !important;   /* hồng nhạt */
-  color: #000000 !important;        /* chữ đen rõ */
-  font-family: "Segoe UI", Roboto, sans-serif;
+/* File uploader */
+[data-testid="stFileUploaderDropzone"] {
+  background:#111 !important;        /* đen */
+  border:2px dashed #ff5aa7 !important;
+  border-radius:14px !important;
 }
+[data-testid="stFileUploaderDropzone"] * {
+  color:#fff !important;             /* chữ trắng trên nền đen */
+}
+[data-testid="stFileUploader"] button {
+  background:#111 !important;
+  color:#fff !important;
+  border:2px solid #ff5aa7 !important;
+  border-radius:10px !important;
+}
+[data-testid="stFileUploader"] button:hover {
+  border-color:#ff2f8f !important;
+  background:#1c1c1c !important;
+}
+
 
 
 
