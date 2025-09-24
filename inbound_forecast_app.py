@@ -32,7 +32,7 @@ st.markdown(
     /* Buttons */
     div.stButton > button {
         background-color: #ff66b2;
-        color: white;
+        color: #000000;  /* chữ trên button đen */
         border-radius: 12px;
         height: 3em;
         width: 100%;
