@@ -9,28 +9,16 @@ import math
 st.markdown(
 """
 <style>
-/* File uploader */
-[data-testid="stFileUploaderDropzone"] {
-  background:#111 !important;        /* đen */
-  border:2px dashed #ff5aa7 !important;
-  border-radius:14px !important;
-}
-[data-testid="stFileUploaderDropzone"] * {
-  color:#fff !important;             /* chữ trắng trên nền đen */
-}
-[data-testid="stFileUploader"] button {
-  background:#111 !important;
-  color:#fff !important;
-  border:2px solid #ff5aa7 !important;
+
+/* File chip */
+[data-testid="stFileUploadList"] > div {
+  background:#fff !important;        /* trắng trên nền hồng */
+  color:#000 !important;             /* chữ đen */
+  border:1px solid #ff5aa7 !important;
+  border-left:4px solid #ff2f8f !important;
   border-radius:10px !important;
+  padding:6px 10px !important;
 }
-[data-testid="stFileUploader"] button:hover {
-  border-color:#ff2f8f !important;
-  background:#1c1c1c !important;
-}
-
-
-
 
 /* Giữ CSS cũ của bạn */
 .stApp {
