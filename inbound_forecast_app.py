@@ -260,24 +260,21 @@ if uploaded:
         with st.spinner("Calculating..."):
             out_current, out_ordered, date_cols, used_today = process_input(df_in, days_ahead=int(days_ahead)) 
 
+            # -------------------------
+            # Highlight SKU có ROP date cùng tuần
+            # -------------------------
+            df_current_display = out_current.copy()
+            df_current_display["ROP_date"] = pd.to_datetime(df_current_display["ROP date"], errors="coerce")
+            df_current_display["Week_num"] = df_current_display["ROP_date"].dt.to_period("W-MON")
+            highlight_weeks = df_current_display.groupby("Week_num")["SKU_code"].transform("count") > 1
 
-# -------------------------
-# Highlight SKU có ROP date cùng tuần
-# -------------------------
-df_current_display = out_current.copy()
-df_current_display["ROP_date"] = pd.to_datetime(df_current_display["ROP date"], errors="coerce")
-df_current_display["Week_num"] = df_current_display["ROP_date"].dt.to_period("W-MON")
-highlight_weeks = df_current_display.groupby("Week_num")["SKU_code"].transform("count") > 1
+            def highlight_sku(s):
+            color = "background-color: yellow; font-weight: bold;"
+            return [color if highlight_weeks.iloc[i] else "" for i in range(len(s))]
 
-def highlight_sku(s):
-    color = "background-color: yellow; font-weight: bold;"
-    return [color if highlight_weeks.iloc[i] else "" for i in range(len(s))]
-
-# Hiển thị với highlight
-st.subheader("Output.current (preview)")
-st.dataframe(df_current_display.style.apply(highlight_sku, subset=["SKU_code"]), use_container_width=True)
-
-
+            # Hiển thị với highlight
+            st.subheader("Output.current (preview)")
+            st.dataframe(df_current_display.style.apply(highlight_sku, subset=["SKU_code"]), use_container_width=True)
 
 
         st.subheader("Output.current (preview)")
