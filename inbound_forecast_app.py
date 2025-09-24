@@ -25,11 +25,8 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
 
 /* MỚI: label + placeholder widget */
 label, .stMarkdown, div.stFileUploader span {
+}
 
-}
-input[type="text"], textarea {
-    color: #000000 !important;
-}
 </style>
 """,
 unsafe_allow_html=True
