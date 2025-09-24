@@ -6,76 +6,124 @@ from datetime import datetime, timedelta
 from io import BytesIO
 import math
 
-st.markdown(
-"""
+st.markdown("""
 <style>
-/* Nền và font toàn app */
-.stApp {
-    background-color: #ffe6f0;  /* nền hồng nhạt */
-    font-family: "sans-serif";
-    color: #000000;  /* chữ đen */
+/* === 0. Toàn app: nền hồng nhạt === */
+html, body, .stApp, [data-testid="stAppViewContainer"] {
+  background: #ffe6f0 !important;   /* HỒNG NHẠT */
+  color: #111217 !important;
+  font-family: "Segoe UI", Roboto, sans-serif;
 }
 
-/* Title / Subheader */
-h1, h2, h3, h4, h5, h6 {
-    color: #000000;
-    font-family: "Arial", sans-serif;
+/* === 1. Title === */
+h1 {
+  color: #111217 !important;
+  text-align: center;
+  font-weight: 800 !important;
+}
+h1::after {
+  content:"";
+  display:block;width:80px;height:3px;margin:10px auto;
+  background: linear-gradient(90deg,#ff2f8f,#ff5aa7);
+  border-radius:2px;
 }
 
-/* Buttons */
-div.stButton > button {
-    background-color: #ff66b2;
-    color: #000000;
-    border-radius: 12px;
-    height: 3em;
-    width: 100%;
-    font-size: 18px;
-    font-family: "Arial", sans-serif;
-    transition: 0.3s;
+/* === 2. File Uploader Dropzone === */
+[data-testid="stFileUploaderDropzone"] {
+  background:#111217 !important;     /* ĐEN */
+  border:2px dashed #ff5aa7 !important;
+  border-radius:14px !important;
+  box-shadow:0 4px 12px rgba(255,42,143,.25) !important;
 }
-div.stButton > button:hover {
-    background-color: #ff3385;
-    transform: scale(1.05);
+[data-testid="stFileUploaderDropzone"] * {
+  color:#ffffff !important;          /* chữ TRẮNG */
 }
-.stDownloadButton button {
-    background-color: #ff99cc;
-    color: #000000;
-    border-radius: 12px;
-    height: 3em;
-    font-size: 18px;
-    font-family: "Arial", sans-serif;
-    transition: 0.3s;
+[data-testid="stFileUploader"] button {
+  background:#111217 !important;
+  color:#ffffff !important;
+  border:2px solid #ff5aa7 !important;
+  border-radius:10px !important;
 }
-.stDownloadButton button:hover {
-    background-color: #ff4da6;
-    transform: scale(1.05);
+[data-testid="stFileUploader"] button:hover {
+  border-color:#ff2f8f !important;
+  background:#1a1a1f !important;
 }
 
-/* Alert box */
+/* === 3. File chip (tên file đã chọn) === */
+[data-testid="stFileUploadList"] > div {
+  background:#ffffff !important;    /* TRẮNG */
+  color:#111217 !important;
+  border:1px solid #ff5aa7 !important;
+  border-left:4px solid #ff2f8f !important;
+  border-radius:10px !important;
+  padding:6px 10px !important;
+}
+
+/* === 4. Alert (success/info/error) === */
 .stAlert {
-    border-radius: 15px;
-    padding: 12px;
-    font-size: 16px;
-    color: #000000;
-    font-family: "Arial", sans-serif;
+  background:#111217 !important;     /* ĐEN */
+  color:#ffffff !important;
+  border-left:5px solid #ff5aa7 !important;
+  border-radius:10px !important;
+  padding:10px !important;
 }
 
-/* Labels, placeholders, markdown */
-label, .stMarkdown, div.stFileUploader span, .css-1y0tads {
-    color: #000000 !important;
-    font-family: "Arial", sans-serif !important;
+/* === 5. Input field === */
+.stTextInput>div>div>input,
+.stNumberInput input,
+.stDateInput>div>div>input,
+.stTextArea textarea {
+  background:#ffffff !important;     /* TRẮNG */
+  color:#111217 !important;
+  border:1px solid #ffb6d0 !important;
+  border-radius:8px !important;
+}
+.stTextInput>div>div>input:focus,
+.stNumberInput input:focus,
+.stDateInput>div>div>input:focus,
+.stTextArea textarea:focus {
+  border-color:#ff2f8f !important;
 }
 
-/* Input text / number / textarea */
-input[type="number"], input[type="text"], textarea {
-    color: #000000 !important;
-    background-color: #ffffff !important;
-    font-family: "Arial", sans-serif !important;
+/* === 6. Dataframe/Table === */
+[data-testid="stStyledTable"] {
+  background:#111217 !important;    /* ĐEN */
+  color:#ffffff !important;
+  border:1px solid #ff5aa7 !important;
+  border-radius:12px !important;
+  overflow:hidden;
+}
+[data-testid="stStyledTable"] th {
+  background:#1a1a1f !important;
+  color:#ff5aa7 !important;
+  font-weight:800 !important;
+}
+[data-testid="stStyledTable"] td {
+  border-bottom:1px solid #2a2a2a !important;
+}
+[data-testid="stStyledTable"] tbody tr:nth-child(odd) td {
+  background:#161616 !important;
+}
+[data-testid="stStyledTable"] tbody tr:hover td {
+  background:#222 !important;
+}
+
+/* === 7. Buttons chung === */
+div.stButton > button, .stDownloadButton button {
+  background:#111217 !important;  /* ĐEN */
+  color:#ffffff !important;       /* chữ TRẮNG */
+  border:2px solid #ff5aa7 !important;
+  border-radius:12px !important;
+  font-weight:700 !important;
+  transition:0.2s;
+}
+div.stButton > button:hover, .stDownloadButton button:hover {
+  background:#1c1c1c !important;
+  border-color:#ff2f8f !important;
 }
 </style>
-""",
-unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
+
 
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
