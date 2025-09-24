@@ -284,9 +284,6 @@ if uploaded:
             st.subheader("Output.current (preview)")
             st.dataframe(df_current_display.style.apply(highlight_sku, subset=["SKU_code"]), use_container_width=True)
 
-        st.subheader("Output.current (preview)")
-        st.dataframe(out_current.head(200), use_container_width=True)
-
         st.subheader("Output.ordered (preview)")
         st.dataframe(out_ordered.head(200), use_container_width=True)
 
