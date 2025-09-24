@@ -9,13 +9,22 @@ import math
 st.markdown(
 """
 <style>
+
+/* Nền toàn app */
+html, body, .stApp {
+  background: #ffe6f0 !important;   /* hồng nhạt */
+  color: #000000 !important;        /* chữ đen rõ */
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+
+
 /* Giữ CSS cũ của bạn */
 .stApp {
     background-color: #ffe6f0;
     font-family: "Segoe UI", cursive, sans-serif;
     color: #000000;
 }
-
 
 h1 { color:#000000; text-align:center; font-size:42px !important; }
 h2,h3 { color:#000000; }
