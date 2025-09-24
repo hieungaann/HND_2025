@@ -1,3 +1,11 @@
+# app.py
+import streamlit as st
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+from io import BytesIO
+import math
+
 # Add CSS for pink cute theme
 st.markdown(
     """
@@ -60,13 +68,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-# app.py
-import streamlit as st
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-from io import BytesIO
-import math
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
 st.title("📦 Hieu Ngan's Planner")
