@@ -62,6 +62,13 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
 /* MỚI: label + placeholder widget */
 label, .stMarkdown, div.stFileUploader span {
 }
+
+/* ✨ Tên file hiển thị màu đen */
+div.stFileUploader span {
+  color:#000 !important;
+}
+
+
 </style>
 """,
 unsafe_allow_html=True
