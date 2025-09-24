@@ -63,12 +63,6 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
 label, .stMarkdown, div.stFileUploader span {
 }
 
-/* Tên file hiển thị khi upload */
-div.stFileUploader p, 
-div.stFileUploader span {
-    color: #000 !important;   /* chữ đen */
-}
-
 
 </style>
 """,
