@@ -28,7 +28,7 @@ label, .stMarkdown, div.stFileUploader span {
 
 }
 input[type="number"], input[type="text"], textarea {
-    color: #000000 !important;
+
 }
 </style>
 """,
