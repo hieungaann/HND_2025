@@ -10,15 +10,16 @@ st.markdown(
 """
 <style>
 
-/* File chip */
-[data-testid="stFileUploadList"] > div {
-  background:#fff !important;        /* trắng trên nền hồng */
+
+/* Code chips */
+[data-testid="stMarkdownContainer"] code {
+  background:#ffd6e8 !important;     /* pastel hồng */
   color:#000 !important;             /* chữ đen */
   border:1px solid #ff5aa7 !important;
-  border-left:4px solid #ff2f8f !important;
-  border-radius:10px !important;
-  padding:6px 10px !important;
+  border-radius:6px !important;
+  padding:0 6px !important;
 }
+
 
 /* Giữ CSS cũ của bạn */
 .stApp {
