@@ -6,41 +6,79 @@ from datetime import datetime, timedelta
 from io import BytesIO
 import math
 
-st.markdown(
-"""
+st.markdown("""
 <style>
-/* Nền và font toàn app */
-.stApp {
-    background-color: #ffe6f0;
-    font-family: "Comic Sans MS", cursive, sans-serif;
-    color: #000000;
+:root{
+  --pink:#ff5aa7;
+  --pink-strong:#ff2f8f;
+  --ink:#111217;        /* chữ tối */
+  --card:#ffffff;       /* nền card sáng để nổi trên nền hồng */
 }
 
-/* Title / Subheader */
-h1 { color:#000000; text-align:center; font-size:42px !important; }
-h2,h3 { color:#000000; }
+/* ==== 1) FILE UPLOADER: Dropzone nổi bật hơn ==== */
+/* khung ngoài của uploader */
+[data-testid="stFileUploader"]{
+  border-radius: 14px !important;
+}
+/* dropzone */
+[data-testid="stFileUploaderDropzone"]{
+  background: #1f2027 !important;             /* đậm hơn để nổi trên nền hồng */
+  border: 2px dashed var(--pink) !important;   /* viền hồng */
+  border-radius: 14px !important;
+  box-shadow: 0 6px 18px rgba(255, 42, 143, .16) !important;
+}
+[data-testid="stFileUploaderDropzone"]:hover{
+  border-color: var(--pink-strong) !important;
+  box-shadow: 0 8px 22px rgba(255, 42, 143, .24) !important;
+}
+/* chữ bên trong dropzone */
+[data-testid="stFileUploaderDropzone"] *{
+  color: #f1f1f5 !important;
+}
 
-/* Buttons */
-div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
-div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); }
-.stDownloadButton button { background-color:#ff99cc; color:#000000; border-radius:12px; height:3em; font-size:18px; transition:0.3s; }
-.stDownloadButton button:hover { background-color:#ff4da6; transform: scale(1.05); }
+/* nút Browse files trong uploader */
+[data-testid="stFileUploader"] button{
+  background:#0f1014 !important;
+  color:#f5f6f8 !important;
+  border:2px solid var(--pink) !important;
+  border-radius:10px !important;
+}
+[data-testid="stFileUploader"] button:hover{
+  border-color: var(--pink-strong) !important;
+}
 
-/* Alert box */
-.stAlert { border-radius:15px; padding:12px; font-size:16px; color:#000000; }
+/* ==== 2) CHIP “file đã chọn” nổi bật trên nền hồng ==== */
+[data-testid="stFileUploadList"] > div{
+  background: var(--card) !important;          /* trắng để tương phản */
+  color: var(--ink) !important;
+  border: 1px solid rgba(255,90,167,.55) !important;
+  border-left: 4px solid var(--pink-strong) !important;
+  border-radius: 12px !important;
+  padding: 6px 10px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.05) !important;
+}
+/* icon file trong chip */
+[data-testid="stFileUploadList"] svg{
+  color: var(--pink-strong) !important;
+}
 
-/* Label / placeholder */
-label, .stMarkdown, div.stFileUploader span, .css-1y0tads { color:#000000 !important; }
+/* ==== 3) Hộp thông báo (st.success / st.info / st.error) nổi bật hơn ==== */
+.stAlert{
+  background: var(--card) !important;          /* trắng để nổi trên nền hồng */
+  color: var(--ink) !important;
+  border: 1px solid rgba(255,90,167,.40) !important;
+  border-left: 5px solid var(--pink-strong) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,.06) !important;
+}
 
-/* Input text / number / textarea */
-input[type="number"], input[type="text"], textarea {
-    color:#000000 !important;
-    background-color: #ffffff !important;
+/* (tuỳ chọn) thanh nhập số – viền hồng khi focus cho đồng bộ */
+.stNumberInput input:focus{
+  border-color: var(--pink-strong) !important;
+  outline: none !important;
 }
 </style>
-""",
-unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
