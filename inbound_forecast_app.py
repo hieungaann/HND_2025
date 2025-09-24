@@ -27,8 +27,8 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
 label, .stMarkdown, div.stFileUploader span {
 
 }
-input[type="number"], input[type="text"], textarea {
-
+input[type="text"], textarea {
+    color: #000000 !important;
 }
 </style>
 """,
