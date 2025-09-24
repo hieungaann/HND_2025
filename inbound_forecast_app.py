@@ -19,22 +19,6 @@ st.markdown(
   padding:0 6px !important;
 }
 
-/* Buttons */
-div.stButton > button, .stDownloadButton button {
-  background:#111 !important;        /* đen */
-  color:#fff !important;             /* chữ trắng */
-  border:2px solid #ff5aa7 !important;
-  border-radius:12px !important;
-  font-weight:700 !important;
-}
-div.stButton > button:hover, .stDownloadButton button:hover {
-  background:#1c1c1c !important;
-  border-color:#ff2f8f !important;
-}
-
-
-
-/* Giữ CSS cũ của bạn */
 .stApp {
     background-color: #ffe6f0;
     font-family: "Segoe UI", cursive, sans-serif;
