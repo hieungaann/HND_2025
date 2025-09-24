@@ -37,10 +37,12 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
 
 /* Alert */
 .stAlert {
-  background:#ff2f8f !important;        /* hồng */
+  background:#111 !important;        /* đen */
   color:#fff !important;             /* chữ trắng */
+  border-left:5px solid #ff5aa7 !important;
+  border-radius:10px !important;
+  padding:10px !important;
 }
-
 
 /* MỚI: label + placeholder widget */
 label, .stMarkdown, div.stFileUploader span {
