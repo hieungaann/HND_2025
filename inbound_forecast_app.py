@@ -9,71 +9,33 @@ import math
 st.markdown(
 """
 <style>
-/* ===========================
-   Toàn bộ app
-   =========================== */
+/* Nền và font toàn app */
 .stApp {
-    background-color: #ffe6f0;   /* nền hồng nhạt */
+    background-color: #ffe6f0;
     font-family: "Comic Sans MS", cursive, sans-serif;
-    color: #000000;              /* chữ mặc định đen */
+    color: #000000;
 }
 
-/* ===========================
-   Title / Subheader
-   =========================== */
+/* Title / Subheader */
 h1 { color:#000000; text-align:center; font-size:42px !important; }
 h2,h3 { color:#000000; }
 
-/* ===========================
-   Buttons
-   =========================== */
-div.stButton > button {
-    background-color:#ff66b2;
-    color:#000000;
-    border-radius:12px;
-    height:3em;
-    width:100%;
-    font-size:18px;
-    transition:0.3s;
-}
-div.stButton > button:hover {
-    background-color:#ff3385;
-    transform: scale(1.05);
-}
+/* Buttons */
+div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
+div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); }
+.stDownloadButton button { background-color:#ff99cc; color:#000000; border-radius:12px; height:3em; font-size:18px; transition:0.3s; }
+.stDownloadButton button:hover { background-color:#ff4da6; transform: scale(1.05); }
 
-/* Download button */
-.stDownloadButton button {
-    background-color:#ff99cc;
-    color:#000000;
-    border-radius:12px;
-    height:3em;
-    font-size:18px;
-    transition:0.3s;
-}
-.stDownloadButton button:hover {
-    background-color:#ff4da6;
-    transform: scale(1.05);
-}
+/* Alert box */
+.stAlert { border-radius:15px; padding:12px; font-size:16px; color:#000000; }
 
-/* ===========================
-   Alerts (info, error, success)
-   =========================== */
-.stAlert {
-    border-radius:15px;
-    padding:12px;
-    font-size:16px;
-    color:#000000;
-}
+/* Label / placeholder */
+label, .stMarkdown, div.stFileUploader span, .css-1y0tads { color:#000000 !important; }
 
-/* ===========================
-   Input / Number / File Uploader / Placeholder / Label
-   =========================== */
-label, .stMarkdown, div.stFileUploader span {
-    color:#000000 !important;
-}
+/* Input text / number / textarea */
 input[type="number"], input[type="text"], textarea {
     color:#000000 !important;
-    background-color: #ffffff !important;  /* optional: nền trắng cho input */
+    background-color: #ffffff !important;
 }
 </style>
 """,
