@@ -23,10 +23,6 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
 .stDownloadButton button:hover { background-color:#ff4da6; transform: scale(1.05); }
 .stAlert { border-radius:15px; padding:12px; font-size:16px; color:#000000; }
 
-[data-testid="stFileUploaderDropzone"] * {
-  color:#fff !important;             /* chữ trắng trên nền đen */
-}
-
 [data-testid="stFileUploader"] button {
   background:#111 !important;
   color:#fff !important;
@@ -38,6 +34,19 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
   border-color:#ff2f8f !important;
   background:#1c1c1c !important;
 }
+
+/* File chip */
+[data-testid="stFileUploadList"] > div {
+  background:#fff !important;        /* trắng trên nền hồng */
+  color:#000 !important;             /* chữ đen */
+  border:1px solid #ff5aa7 !important;
+  border-left:4px solid #ff2f8f !important;
+  border-radius:10px !important;
+  padding:6px 10px !important;
+}
+
+
+
 
 /* MỚI: label + placeholder widget */
 label, .stMarkdown, div.stFileUploader span {
