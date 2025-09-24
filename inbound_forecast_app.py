@@ -215,7 +215,7 @@ if uploaded:
         excel_bytes = to_excel_bytes(df_in, out_current, out_ordered)
 
         st.download_button(
-            "⬇️ Download Excel with Input + Output.current + Output.ordered",
+            "⬇️ Download Results",
             data=excel_bytes,
             file_name=f"Replenishment_Result_{used_today}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
