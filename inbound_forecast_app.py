@@ -21,7 +21,7 @@ h2,h3 { color:#000000; }
 
 /* Buttons */
 div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
-div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); }
+div.stButton > button:hover { background-color:#ff66b2; transform: scale(1.05); }
 .stDownloadButton button { background-color:#ff99cc; color:#000000; border-radius:12px; height:3em; font-size:18px; transition:0.3s; }
 .stDownloadButton button:hover { background-color:#ff4da6; transform: scale(1.05); }
 
