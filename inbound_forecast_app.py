@@ -277,7 +277,7 @@ if uploaded:
 
             # Hàm highlight
             def highlight_sku(s):
-                color = "background-color: yellow; font-weight: bold;"
+                color = "background-color: Pink; font-weight: bold;"
                 return [color if highlight_mask.iloc[i] else "" for i in range(len(s))]
 
             # Hiển thị bảng với highlight
