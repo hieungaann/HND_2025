@@ -28,10 +28,6 @@ st.markdown(
 h1 { color:#000000; text-align:center; font-size:42px !important; }
 h2,h3 { color:#000000; }
 
-
-/* Label / placeholder */
-label, .stMarkdown, div.stFileUploader span, .css-1y0tads { color:#000000 !important; }
-
 /* Input text / number / textarea */
 input[type="number"], input[type="text"], textarea {
     color:#000000 !important;
