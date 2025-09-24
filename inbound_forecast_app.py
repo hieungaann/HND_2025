@@ -19,6 +19,7 @@ st.markdown(
 
     /* Title */
     h1 {
+        color: #000000;  /* chữ h1 màu đen */
         color: #ff3399;
         text-align: center;
         font-size: 42px !important;
