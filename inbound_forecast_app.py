@@ -26,12 +26,12 @@ st.markdown(
         background-color:#ff66b2; color:#000;
         border-radius:12px; border:2px solid #ff66b2;
         height:3em; font-size:18px;
-        transition:0.1s;
+        transition:0.3s;
     }
     div.stButton > button:hover,
     .stDownloadButton button:hover,
     [data-testid="stFileUploader"] button:hover {
-        background:#ff3385; border-color:#ff3385; transform: scale(1.05);
+        background:#ff66b2; border-color:#ff66b2; transform: scale(1.05);
     }
 
     .stAlert {
