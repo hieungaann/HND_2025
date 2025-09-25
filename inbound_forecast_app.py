@@ -62,7 +62,7 @@ unsafe_allow_html=True
 )
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
-st.title("🪄 Hieu Ngan's Planner")
+st.title("🪄 Hieu Ngan's Planner 🫧")
 
 # ---------------------------
 # Helpers
