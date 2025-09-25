@@ -43,7 +43,7 @@ div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); 
 
 [data-testid="stFileUploader"] button:hover {
   border-color:#ff2f8f !important;
-  background:#1c1c1c !important;
+  background:#fff !important;
 }
 /* Alert */
 .stAlert {
