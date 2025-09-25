@@ -37,7 +37,7 @@ st.markdown(
     .stAlert {
         background:#ff2f8f !important;
         color:#000 !important;
-        border-left:5px solid #00000 !important;
+        border-left:5px solid #ff2f8f !important;
         border-radius:10px !important;
         padding:10px !important;
     }
