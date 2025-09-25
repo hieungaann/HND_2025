@@ -23,7 +23,7 @@ st.markdown(
     div.stButton > button,
     .stDownloadButton button,
     [data-testid="stFileUploader"] button {
-        background-color:#00000; color:#000;
+        background-color:#ff66b2; color:#000;
         border-radius:12px; border:2px solid #ff66b2;
         height:3em; font-size:18px;
         transition:0.3s;
