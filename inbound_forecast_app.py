@@ -17,9 +17,9 @@ st.markdown(
 h1 { color:#000000; text-align:center; font-size:42px !important; }
 h2,h3 { color:#000000; }
 /* Label / placeholder */
-label, .stMarkdown { color:#fff !important; }
+label, .stMarkdown { color:#000000 !important; }
 
-div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
+div.stButton > button { background-color:#ff66b2; color:#fff; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
 div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); }
 .stDownloadButton button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; font-size:18px; transition:0.3s; }
 .stDownloadButton button:hover { background-color:#ff3385; transform: scale(1.05); }
