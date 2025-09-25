@@ -281,12 +281,32 @@ if uploaded:
                 color = "background-color: Pink; font-weight: bold;"
                 return [color if highlight_mask.iloc[i] else "" for i in range(len(s))]
 
-            # Hiển thị bảng với highlight
-            st.subheader("Output.current (preview)")
-            st.dataframe(df_current_display.style.apply(highlight_sku, subset=["SKU_code"]), use_container_width=True)
+            # Hàm format số: nếu là float thì hiển thị không có nhiều số 0
+            def format_numbers(val):
+                if isinstance(val, float) and val.is_integer():
+                    return f"{int(val)}"
+                elif isinstance(val, float):
+                    return f"{val:.2f}"   # 2 số thập phân, bạn có thể chỉnh thành .0f nếu muốn bỏ luôn
+                return val
 
+            # Hiển thị Output.current
+            st.subheader("Output.current (preview)")
+            st.dataframe(
+                df_current_display.style
+                    .apply(highlight_sku, subset=["SKU_code"])
+                    .format(format_numbers),
+                use_container_width=True
+            )
+
+            # Hiển thị Output.ordered
             st.subheader("Output.ordered (preview)")
-            st.dataframe(df_current_display.style.apply(highlight_sku, subset=["SKU_code"]), use_container_width=True)
+            st.dataframe(
+                df_current_display.style
+                    .apply(highlight_sku, subset=["SKU_code"])
+                    .format(format_numbers),
+                use_container_width=True
+            )
+
 
         # prepare excel bytes
         excel_bytes = to_excel_bytes(df_in, out_current, out_ordered)
