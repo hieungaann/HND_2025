@@ -239,6 +239,7 @@ st.markdown("**Upload** an Excel file that contains only the sheet **'Input'** w
 uploaded = st.file_uploader("Upload Input Excel (.xlsx)", type=["xlsx"])
 
 #days_ahead = st.number_input("Simulation days ahead (today included)", min_value=7, max_value=90, value=30, step=1)
+days_ahead = 30
 
 if uploaded:
     try:
