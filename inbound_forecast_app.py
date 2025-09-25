@@ -26,7 +26,7 @@ st.markdown(
         background-color:#ff66b2; color:#000;
         border-radius:12px; border:2px solid #ff66b2;
         height:3em; font-size:18px;
-        transition:0.3s;
+        transition:0.1s;
     }
     div.stButton > button:hover,
     .stDownloadButton button:hover,
