@@ -49,21 +49,6 @@ st.markdown(
         border-radius:6px !important;
         padding:0 6px !important;
     }
-
-    /* Nút xóa file trong uploader */
-        [data-testid="stFileUploader"] button[title="Remove file"] {
-            background: #fff !important;
-            color: #ff3385 !important;
-            border: 1px solid #ff3385 !important;
-            border-radius: 50% !important;
-            font-weight: bold !important;
-            width: 28px; height: 28px;
-            padding: 0;
-        }
-        [data-testid="stFileUploader"] button[title="Remove file"]:hover {
-            background: #ff3385 !important;
-            color: #fff !important;
-        }
     </style>
     """,
     unsafe_allow_html=True,
