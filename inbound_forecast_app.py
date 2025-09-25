@@ -1,162 +1,225 @@
-import math
+# app.py
+import streamlit as st
+import pandas as pd
+import numpy as np
 from datetime import datetime, timedelta
 from io import BytesIO
+import math
 
-import numpy as np
-import pandas as pd
-import streamlit as st
-
-# =============================
-# 🎨 UI Styling
-# =============================
 st.markdown(
-    """
-    <style>
-    .stApp {
-        background-color: #ffe6f0;
-        font-family: "Segoe UI";
-        color: #000;
-    }
-    h1 { color:#000; text-align:center; font-size:42px !important; }
-    h2,h3,label,.stMarkdown { color:#000 !important; }
+"""
+<style>
+.stApp {
+    background-color: #ffe6f0;
+    font-family: "Segoe UI";
+    color: #000000;
+}
+h1 { color:#000000; text-align:center; font-size:42px !important; }
+h2,h3 { color:#000000; }
+/* Label / placeholder */
+label, .stMarkdown { color:#000000 !important; }
 
-    div.stButton > button,
-    .stDownloadButton button,
-    [data-testid="stFileUploader"] button {
-        background-color:#ff66b2; color:#000;
-        border-radius:12px; border:2px solid #ff66b2;
-        height:3em; font-size:18px;
-        transition:0.3s;
-    }
-    div.stButton > button:hover,
-    .stDownloadButton button:hover,
-    [data-testid="stFileUploader"] button:hover {
-        background:#ff3385; border-color:#ff3385; transform: scale(1.05);
-    }
+div.stButton > button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; width:100%; font-size:18px; transition:0.3s; }
+div.stButton > button:hover { background-color:#ff3385; transform: scale(1.05); }
+.stDownloadButton button { background-color:#ff66b2; color:#000000; border-radius:12px; height:3em; font-size:18px; transition:0.3s; }
+.stDownloadButton button:hover { background-color:#ff3385; transform: scale(1.05); }
+.stAlert { border-radius:15px; padding:12px; font-size:16px; color:#000000; }
 
-    .stAlert {
-        background:#ff2f8f !important;
-        color:#000 !important;
-        border-left:5px solid #ff2f8f !important;
-        border-radius:10px !important;
-        padding:10px !important;
-    }
+/* Code chips */
+[data-testid="stMarkdownContainer"] code {
+  background:#ffd6e8 !important;     /* pastel hồng */
+  color:#000 !important;             /* chữ đen */
+  border:1px solid #ff5aa7 !important;
+  border-radius:6px !important;
+  padding:0 6px !important;
+}
 
-    [data-testid="stMarkdownContainer"] code {
-        background:#ffd6e8 !important;
-        color:#000 !important;
-        border:1px solid #ff5aa7 !important;
-        border-radius:6px !important;
-        padding:0 6px !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
+[data-testid="stFileUploader"] button {
+  background:#ff66b2 !important;
+  color:#000000 !important;
+  border:2px solid #ff66b2 !important;
+  border-radius:10px !important;
+}
+
+[data-testid="stFileUploader"] button:hover {
+  border-color:#ff3385 !important;
+  background:#ff3385 !important;
+}
+/* Alert */
+.stAlert {
+  background:#ff2f8f !important;        /* hồng */
+  color:#000000 !important;             /* chữ trắng */
+  border-left:5px solid #ff2f8f !important;
+  border-radius:10px !important;
+  padding:10px !important;
+}
+/* MỚI: label + placeholder widget */
+label, .stMarkdown, div.stFileUploader span {
+}
+</style>
+""",
+unsafe_allow_html=True
 )
 
 st.set_page_config(page_title="Replenishment HND2025", layout="wide")
 st.title("🪄 Hieu Ngan's Planner 💖")
 
-# =============================
-# 🔧 Helpers
-# =============================
+# ---------------------------
+# Helpers
+# ---------------------------
 REQUIRED_COLS = [
-    "CAT", "SKU_code", "Available stock", "Upcoming stock", "Upcoming date",
-    "Forecast OB/day", "Leadtime (day)", "DOC"
+    "CAT",
+    "SKU_code",
+    "Available stock",
+    "Upcoming stock",
+    "Upcoming date",
+    "Forecast OB/day",
+    "Leadtime (day)",
+    "DOC",
 ]
 
-def validate_input(df: pd.DataFrame):
+def validate_input(df):
     df.columns = df.columns.str.strip()
-    return [c for c in REQUIRED_COLS if c not in df.columns]
+    missing = [c for c in REQUIRED_COLS if c not in df.columns]
+    return missing
 
 def safe_num(x):
     try:
         return float(x) if not pd.isna(x) else 0.0
-    except Exception:
+    except:
         return 0.0
 
-# =============================
-# 📊 Core Processing
-# =============================
 def process_input(df_input, days_ahead=30, today=None):
+    # copy and normalize
     df = df_input.copy()
     df.columns = df.columns.str.strip()
+    # parse upcoming date to date
     df["Upcoming date"] = pd.to_datetime(df["Upcoming date"], errors="coerce").dt.date
 
-    today = today or pd.to_datetime("today").normalize().date()
+    # today default
+    if today is None:
+        today = pd.to_datetime("today").normalize().date()
+
+    # build date range from today to today+days_ahead (inclusive)
     dates = [today + timedelta(days=i) for i in range(days_ahead + 1)]
+    # header strings for date columns (ISO format)
     date_cols = [d.strftime("%Y-%m-%d") for d in dates]
 
-    out_current, out_ordered = [], []
+    # prepare outputs
+    out_current_rows = []
+    out_ordered_rows = []
 
-    for _, row in df.iterrows():
-        # --- Inputs ---
-        cat, sku = row.get("CAT"), row.get("SKU_code")
+    for idx, row in df.iterrows():
+        # read inputs
+        cat = row.get("CAT")
+        sku = row.get("SKU_code")
         available = safe_num(row.get("Available stock", 0))
         upcoming_stock = safe_num(row.get("Upcoming stock", 0))
-        upcoming_date = row.get("Upcoming date")
+        upcoming_date = row.get("Upcoming date")  # is date or NaT
         forecast = safe_num(row.get("Forecast OB/day", 0))
         leadtime = int(safe_num(row.get("Leadtime (day)", 0)))
         doc = safe_num(row.get("DOC", 0))
 
-        # --- Simulation: Output.current ---
-        cur, stocks_current, oos_date = available, [], None
+        # ---------- OUTPUT.CURRENT simulation ----------
+        cur = available
+        stocks_current = []
+        oos_date = None
+
+        # iterate days: for Output.current subtract forecast first, then add incoming if any, then cap to zero
         for d in dates:
-            cur -= forecast
+            # subtract forecast (end-of-day)
+            cur = cur - forecast
+
+            # add upcoming stock if it arrives today
             if (upcoming_date is not None) and (d == upcoming_date):
-                cur += upcoming_stock
+                cur = cur + upcoming_stock
+
+            # cap at 0 (Excel logic: no negatives shown)
             cur = max(cur, 0.0)
+
             stocks_current.append(cur)
+
+            # record first OOS day (first day with 0 after capping)
             if (oos_date is None) and (cur == 0.0):
                 oos_date = d
 
-        rop_date = (oos_date - timedelta(days=leadtime + 1)) if oos_date else None
-        order_qty = int(math.ceil(forecast * (leadtime + doc))) if forecast > 0 else 0
+        # compute ROP date per your rule: ROP = OOS_date - 1 - leadtime
+        if oos_date:
+            rop_date = oos_date - timedelta(days=(leadtime + 1))
+        else:
+            rop_date = None
 
-        base_info = dict(
-            CAT=cat, SKU_code=sku,
-            **{
-                "Available stock": available,
-                "Upcoming stock": upcoming_stock,
-                "Upcoming date": upcoming_date,
-                "Forecast OB/day": forecast,
-                "Leadtime (day)": leadtime,
-                "DOC": doc,
-                "ROP date": rop_date.strftime("%Y-%m-%d") if rop_date else None,
-                "Order Qty": order_qty,
-            }
-        )
+        # Order Qty: Forecast OB/day * (Leadtime + DOC)
+        # ensure DOC numeric (user input may be int)
+        order_qty_val = forecast * (leadtime + doc)
+        # round up to integer
+        order_qty = int(math.ceil(order_qty_val)) if order_qty_val > 0 else 0
 
-        cur_row = {**base_info, **dict(zip(date_cols, stocks_current))}
-        out_current.append(cur_row)
+        # build base info for this row (columns A->H preserved)
+        base = {
+            "CAT": cat,
+            "SKU_code": sku,
+            "Available stock": available,
+            "Upcoming stock": upcoming_stock,
+            "Upcoming date": upcoming_date,
+            "Forecast OB/day": forecast,
+            "Leadtime (day)": leadtime,
+            "DOC": doc,
+            # I, J
+            "ROP date": rop_date.strftime("%Y-%m-%d") if rop_date else None,
+            "Order Qty": order_qty,
+        }
 
-        # --- Simulation: Output.ordered ---
-        cur2, stocks_ordered = available, []
+        # prepare output.current row: include daily columns
+        cur_row = base.copy()
+        for col_name, val in zip(date_cols, stocks_current):
+            cur_row[col_name] = val
+        out_current_rows.append(cur_row)
+
+        # ---------- OUTPUT.ORDERED simulation ----------
+        # For ordered simulation user requested:
+        # "stock available của ngày trước đó + upcoming stock (if match) + orderQTY (if day==ROP+leadtime) - Forecast OB/day"
+        # that means: add incoming & order at start of the day, then subtract forecast, then cap at 0.
+        cur2 = available
+        stocks_ordered = []
         arrival_date = (rop_date + timedelta(days=leadtime)) if rop_date else None
 
         for d in dates:
+            # add upcoming if arrives today
             if (upcoming_date is not None) and (d == upcoming_date):
-                cur2 += upcoming_stock
+                cur2 = cur2 + upcoming_stock
+
+            # add order if arrival today (ROP_date + leadtime)
             if (arrival_date is not None) and (d == arrival_date):
-                cur2 += order_qty
-            cur2 -= forecast
+                cur2 = cur2 + order_qty
+
+            # subtract today's forecast
+            cur2 = cur2 - forecast
+
+            # cap
             cur2 = max(cur2, 0.0)
+
             stocks_ordered.append(cur2)
 
-        ordered_row = {**base_info, **dict(zip(date_cols, stocks_ordered))}
-        out_ordered.append(ordered_row)
+        ordered_row = base.copy()
+        for col_name, val in zip(date_cols, stocks_ordered):
+            ordered_row[col_name] = val
+        out_ordered_rows.append(ordered_row)
 
-    # --- Final DataFrames ---
-    input_cols = df.columns.tolist()
+    # Build DataFrames
+    output_current = pd.DataFrame(out_current_rows)
+    output_ordered = pd.DataFrame(out_ordered_rows)
+
+    # Ensure columns order: A..H (input order) -> ROP date -> Order Qty -> date cols
+    input_cols = [c for c in df.columns.tolist()]  # original A..H order
+    # Some input columns might be Timestamp objects, normalize names
+    # Compose final cols
     final_cols = input_cols + ["ROP date", "Order Qty"] + date_cols
+    # Reindex safely (some columns may be missing if input had different order)
+    output_current = output_current.reindex(columns=final_cols)
+    output_ordered = output_ordered.reindex(columns=final_cols)
 
-    return (
-        pd.DataFrame(out_current).reindex(columns=final_cols),
-        pd.DataFrame(out_ordered).reindex(columns=final_cols),
-        date_cols,
-        today,
-    )
-
+    return output_current, output_ordered, date_cols, today
 
 def to_excel_bytes(df_input, out_current, out_ordered):
     buffer = BytesIO()
@@ -167,12 +230,15 @@ def to_excel_bytes(df_input, out_current, out_ordered):
     buffer.seek(0)
     return buffer
 
-# =============================
-# 🖥️ Streamlit UI
-# =============================
-st.markdown("**Upload** an Excel file (sheet **'Input'**) with columns: `CAT, SKU_code, Available stock, Upcoming stock, Upcoming date, Forecast OB/day, Leadtime (day), DOC`.")
+# ---------------------------
+# Streamlit UI
+# ---------------------------
+st.markdown("**Upload** an Excel file that contains only the sheet **'Input'** with columns: "
+            "`CAT, SKU_code, Available stock, Upcoming stock, Upcoming date, Forecast OB/day, Leadtime (day), DOC`.")
 
 uploaded = st.file_uploader("Upload Input Excel (.xlsx)", type=["xlsx"])
+
+#days_ahead = st.number_input("Simulation days ahead (today included)", min_value=7, max_value=90, value=30, step=1)
 days_ahead = 30
 
 if uploaded:
@@ -182,55 +248,76 @@ if uploaded:
         st.error(f"Error reading file or sheet 'Input': {e}")
         st.stop()
 
-    # Validation
+    # quick validation
     missing = validate_input(df_in)
     if missing:
-        st.error("Missing required columns: " + ", ".join(missing))
+        st.error("Missing required columns in your Input sheet: " + ", ".join(missing))
         st.stop()
 
-    st.success("✅ Input loaded. Preview:")
+    st.success("Input read OK. Preview result:")
     st.dataframe(df_in.head(10))
 
-    if st.button("🚀 Run & Generate Outputs"):
+    if st.button("🚀 Run code & Generate Outputs"):
         with st.spinner("Calculating..."):
-            out_current, out_ordered, date_cols, used_today = process_input(df_in, days_ahead)
+            out_current, out_ordered, date_cols, used_today = process_input(df_in, days_ahead=int(days_ahead)) 
 
+            # Copy dataframe để hiển thị
             df_current_display = out_current.copy()
+
+            # Chuyển ROP date sang datetime
             df_current_display["ROP_date"] = pd.to_datetime(df_current_display["ROP date"], errors="coerce")
+
+            # Lấy tuần (Monday = start of week)
             df_current_display["Week_num"] = df_current_display["ROP_date"].dt.to_period("W-MON")
 
+            # Tìm tuần sớm nhất
             earliest_week = df_current_display["Week_num"].min()
+
+            # Xác định row cần highlight: thuộc tuần sớm nhất
             highlight_mask = df_current_display["Week_num"] == earliest_week
 
+            # Hàm highlight
             def highlight_sku(s):
-                return ["background-color: Pink; font-weight: bold;" if highlight_mask.iloc[i] else "" for i in range(len(s))]
+                color = "background-color: Pink; font-weight: bold;"
+                return [color if highlight_mask.iloc[i] else "" for i in range(len(s))]
 
+            # Hàm format số: nếu là float thì hiển thị không có nhiều số 0
             def format_numbers(val):
                 if isinstance(val, float) and val.is_integer():
                     return f"{int(val)}"
                 elif isinstance(val, float):
-                    return f"{val:.2f}"
+                    return f"{val:.2f}"   # 2 số thập phân, bạn có thể chỉnh thành .0f nếu muốn bỏ luôn
                 return val
 
+            # Hiển thị Output.current
             st.subheader("Output.current (preview)")
             st.dataframe(
-                df_current_display.style.apply(highlight_sku, subset=["SKU_code"]).format(format_numbers),
-                use_container_width=True,
+                df_current_display.style
+                    .apply(highlight_sku, subset=["SKU_code"])
+                    .format(format_numbers),
+                use_container_width=True
             )
 
+            # Hiển thị Output.ordered
             st.subheader("Output.ordered (preview)")
             st.dataframe(
-                df_current_display.style.apply(highlight_sku, subset=["SKU_code"]).format(format_numbers),
-                use_container_width=True,
+                df_current_display.style
+                    .apply(highlight_sku, subset=["SKU_code"])
+                    .format(format_numbers),
+                use_container_width=True
             )
 
+
+        # prepare excel bytes
         excel_bytes = to_excel_bytes(df_in, out_current, out_ordered)
+
         st.download_button(
             "⬇️ Download Results",
             data=excel_bytes,
             file_name=f"Replenishment_Result_{used_today}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        st.success("✨ Done — Results ready to download!")
+
+        st.success("Hieu Ngan Done — The result is ready to be downloaded.")
 else:
-    st.info("Please upload an Excel (.xlsx) file containing sheet 'Input'.")
+    st.info("Please upload an Excel (.xlsx) file that contains a sheet named 'Input'.")
