@@ -297,6 +297,6 @@ if uploaded:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
-        st.success("Hieu Ngan Done — file ready to download.")
+        st.success("Hieu Ngan Done — The result is ready to be downloaded.")
 else:
     st.info("Please upload an Excel (.xlsx) file that contains a sheet named 'Input'.")
