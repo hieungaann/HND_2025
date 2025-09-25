@@ -31,7 +31,7 @@ st.markdown(
     div.stButton > button:hover,
     .stDownloadButton button:hover,
     [data-testid="stFileUploader"] button:hover {
-        background:#ff66b2; border-color:#ff66b2; transform: scale(1.05);
+        background:#ff3385; border-color:#ff3385; transform: scale(1.05);
     }
 
     .stAlert {
