@@ -7,7 +7,7 @@ import pandas as pd
 import streamlit as st
 
 # =============================
-# 🎨 UI Styling
+# Tô màu web
 # =============================
 st.markdown(
     """
@@ -58,8 +58,7 @@ st.set_page_config(page_title="Replenishment HND2025", layout="wide")
 st.title("🪄 Hieu Ngan's Planner 💖")
 
 # =============================
-# 🔧 Helpers
-# =============================
+# Mô tả các yêu cầu đầu vào
 REQUIRED_COLS = [
     "CAT", "SKU_code", "Available stock", "Upcoming stock", "Upcoming date",
     "Forecast OB/day", "Leadtime (day)", "DOC"
@@ -146,7 +145,7 @@ def process_input(df_input, days_ahead=30, today=None):
         ordered_row = {**base_info, **dict(zip(date_cols, stocks_ordered))}
         out_ordered.append(ordered_row)
 
-    # --- Final DataFrames ---
+    # --- Final Data ---
     input_cols = df.columns.tolist()
     final_cols = input_cols + ["ROP date", "Order Qty"] + date_cols
 
@@ -168,7 +167,6 @@ def to_excel_bytes(df_input, out_current, out_ordered):
     return buffer
 
 # =============================
-# 🖥️ Streamlit UI
 # =============================
 st.markdown("**Upload** an Excel file (sheet **'Input'**) with columns: `CAT, SKU_code, Available stock, Upcoming stock, Upcoming date, Forecast OB/day, Leadtime (day), DOC`.")
 
