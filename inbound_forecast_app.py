@@ -5,6 +5,7 @@ from io import BytesIO
 import numpy as np
 import pandas as pd
 import streamlit as st
+from openpyxl.styles import PatternFill
 
 # =============================
 # Tô màu web
@@ -75,7 +76,6 @@ def safe_num(x):
         return 0.0
 
 # =============================
-# 📊 Core Processing
 # =============================
 def process_input(df_input, days_ahead=30, today=None):
     df = df_input.copy()
@@ -163,6 +163,27 @@ def to_excel_bytes(df_input, out_current, out_ordered):
         df_input.to_excel(writer, sheet_name="Input", index=False)
         out_current.to_excel(writer, sheet_name="Output.current", index=False)
         out_ordered.to_excel(writer, sheet_name="Output.ordered", index=False)
+        
+        workbook = writer.book
+        pink_fill = PatternFill(start_color="FFC0CB", end_color="FFC0CB", fill_type="solid")
+
+        # Xác định SKU có ROP date ở tuần sớm nhất
+        df_tmp = out_current.copy()
+        df_tmp["ROP_date"] = pd.to_datetime(df_tmp["ROP date"], errors="coerce")
+        df_tmp["Week_num"] = df_tmp["ROP_date"].dt.to_period("W-MON")
+        earliest_week = df_tmp["Week_num"].min()
+        highlight_skus = set(df_tmp.loc[df_tmp["Week_num"] == earliest_week, "SKU_code"])
+
+        def highlight_sheet(ws, df):
+            col_sku = list(df.columns).index("SKU_code") + 1
+            for row in range(2, ws.max_row + 1):  # bỏ header
+                sku = ws.cell(row=row, column=col_sku).value
+                if sku in highlight_skus:
+                    ws.cell(row=row, column=col_sku).fill = pink_fill
+
+        highlight_sheet(writer.sheets["Output.current"], out_current)
+        highlight_sheet(writer.sheets["Output.ordered"], out_ordered)
+
     buffer.seek(0)
     return buffer
 
